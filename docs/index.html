@@ -1,331 +1,1095 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ORIXON — One Platform. Endless Possibilities. | Official Website</title>
-  <meta name="description" content="Official Website of ORIXON v1.0.0 by Sk Ramjan Ali. 1-Click Download for Android Phone, Android TV, Google TV, Windows 10/11, and macOS.">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>ORIXON — One Platform. Endless Possibilities.</title>
+  <meta name="description" content="ORIXON v1.0.0 — Flagship Smart TV OS Launcher, IPTV & M3U Studio, 4K HDR10 & VR 360/3D Headset Media Hub, Global Cloud Share Hub, and DuckDuckGo Privacy Browser." />
+  <link rel="icon" type="image/png" href="assets/orixon-logo.png" />
   <style>
     :root {
-      --bg-deep: #02050B;
-      --bg-surface: #0A1324;
-      --bg-card: rgba(12, 22, 42, 0.85);
-      --cyan: #38BDF8;
-      --cyan-glow: rgba(56, 189, 248, 0.45);
-      --gold: #F59E0B;
-      --emerald: #10B981;
-      --text-main: #F8FAFC;
-      --text-soft: #94A3B8;
+      --bg-deep: #030711;
+      --bg-surface: rgba(11, 22, 41, 0.72);
+      --bg-card: rgba(15, 29, 54, 0.62);
+      --ice-white: #E8F8FF;
+      --sapphire-bright: #38BDF8;
+      --sapphire-core: #0284C7;
+      --sapphire-deep: #0369A1;
+      --platinum-light: #F1F5F9;
+      --platinum-mid: #94A3B8;
+      --border-glass: rgba(56, 189, 248, 0.22);
+      --border-subtle: rgba(148, 163, 184, 0.14);
+      --glow-sapphire: 0 20px 60px rgba(2, 132, 199, 0.32);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; scroll-behavior: smooth; }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-deep);
+      color: var(--platinum-light);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+    }
+
     body {
-      background:
-        radial-gradient(circle at 50% -10%, rgba(14, 58, 118, 0.72) 0%, transparent 55%),
-        radial-gradient(circle at 85% 35%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
-        var(--bg-deep);
-      color: var(--text-main);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      line-height: 1.6;
       min-height: 100vh;
-    }
-    /* Navbar */
-    .navbar {
-      position: sticky; top: 0; z-index: 100;
-      backdrop-filter: blur(18px);
-      background: rgba(3, 7, 16, 0.82);
-      border-bottom: 1px solid rgba(56, 189, 248, 0.16);
-      padding: 14px 28px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: #FFF; }
-    .nav-brand span { font-size: 20px; font-weight: 900; letter-spacing: 3.5px; text-shadow: 0 0 14px var(--cyan-glow); }
-    .nav-links { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; }
-    .nav-links a { color: var(--text-soft); text-decoration: none; font-size: 13.5px; font-weight: 700; transition: color 0.2s; }
-    .nav-links a:hover { color: var(--cyan); }
-    .nav-cta {
-      background: var(--cyan); color: #02050B !important;
-      padding: 8px 18px; border-radius: 999px; font-weight: 900 !important;
-      box-shadow: 0 0 18px var(--cyan-glow);
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.22) 0%, rgba(2, 132, 199, 0.06) 38%, transparent 70%),
+        radial-gradient(circle at 85% 30%, rgba(56, 189, 248, 0.10) 0%, transparent 50%),
+        radial-gradient(circle at 15% 65%, rgba(3, 105, 161, 0.14) 0%, transparent 55%),
+        linear-gradient(180deg, #030711 0%, #061021 50%, #030711 100%);
+      line-height: 1.6;
     }
 
-    .container { max-width: 1140px; margin: 0 auto; padding: 56px 22px; }
-
-    /* Hero Section */
-    .hero { text-align: center; padding: 24px 0 44px; }
-    .logo-wrap {
-      width: 118px; height: 118px; margin: 0 auto 22px;
-      position: relative; display: flex; align-items: center; justify-content: center;
-      filter: drop-shadow(0 0 32px rgba(56, 189, 248, 0.55));
-      animation: floatLogo 4s ease-in-out infinite;
+    .ambient-grid {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(circle at 50% 25%, black 20%, transparent 85%);
+      -webkit-mask-image: radial-gradient(circle at 50% 25%, black 20%, transparent 85%);
     }
+
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 16px 12px 44px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo-pedestal {
+      position: relative;
+      width: 132px;
+      height: 132px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      border-radius: 34px;
+      background: radial-gradient(circle at 35% 25%, #0F2547 0%, #050C1A 75%, #02050B 100%);
+      border: 1.5px solid rgba(56, 189, 248, 0.42);
+      box-shadow:
+        0 0 55px rgba(56, 189, 248, 0.32),
+        0 18px 40px rgba(0, 0, 0, 0.75),
+        inset 0 1px 1px rgba(255, 255, 255, 0.28);
+      animation: floatLogo 5s ease-in-out infinite;
+    }
+
     @keyframes floatLogo {
       0%, 100% { transform: translateY(0px); }
       50% { transform: translateY(-6px); }
     }
-    .hero h1 {
-      font-size: clamp(42px, 7vw, 68px);
-      font-weight: 900; letter-spacing: 10px;
-      background: linear-gradient(180deg, #FFFFFF 0%, #BAE6FD 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 34px rgba(56, 189, 248, 0.45);
-    }
-    .tagline {
-      color: var(--cyan); font-size: clamp(16px, 2.6vw, 22px);
-      font-weight: 800; margin-top: 8px; letter-spacing: 0.8px;
-    }
-    .meta-row {
-      margin-top: 20px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
-    }
-    .pill-version {
-      padding: 7px 16px; border-radius: 999px;
-      background: rgba(56, 189, 248, 0.14);
-      border: 1px solid rgba(56, 189, 248, 0.45);
-      font-size: 12.5px; font-weight: 800; letter-spacing: 0.8px; color: #FFF;
-    }
-    .pill-author {
-      padding: 7px 18px; border-radius: 999px;
-      background: linear-gradient(90deg, #0E2240, #1A1730);
-      border: 1px solid rgba(245, 158, 11, 0.65);
-      box-shadow: 0 0 20px rgba(245, 158, 11, 0.18);
-      font-size: 12.5px; font-weight: 900; letter-spacing: 1.2px; color: #FFF;
-    }
-    .pill-author b { color: var(--gold); }
 
-    /* Section Headings */
-    .sec-title {
-      text-align: center; font-size: clamp(24px, 4vw, 34px);
-      font-weight: 900; letter-spacing: 1.5px; margin: 48px 0 10px;
-    }
-    .sec-sub {
-      text-align: center; color: var(--text-soft);
-      font-size: 14.5px; max-width: 680px; margin: 0 auto 32px;
+    .logo-pedestal svg {
+      width: 102px;
+      height: 102px;
+      filter: drop-shadow(0 6px 18px rgba(56, 189, 248, 0.45));
     }
 
-    /* 1-Click Download Hub Grid */
-    .dl-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px; margin-top: 24px;
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 18px;
     }
+
+    .pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 15px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.9px;
+      text-transform: uppercase;
+      background: rgba(14, 165, 233, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.32);
+      color: var(--ice-white);
+      backdrop-filter: blur(12px);
+    }
+
+    .pill-badge.author {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.18), rgba(15, 23, 42, 0.85));
+      border-color: rgba(224, 242, 254, 0.38);
+      color: #F8FAFC;
+    }
+
+    .dot-live {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #38BDF8;
+      box-shadow: 0 0 10px #38BDF8;
+    }
+
+    .hero-title {
+      font-size: clamp(42px, 8vw, 74px);
+      font-weight: 900;
+      letter-spacing: 8px;
+      line-height: 1.05;
+      margin-bottom: 12px;
+      background: linear-gradient(180deg, #FFFFFF 0%, #E0F2FE 42%, #38BDF8 85%, #0284C7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 12px 35px rgba(2, 132, 199, 0.28);
+    }
+
+    .hero-tagline {
+      font-size: clamp(17px, 2.6vw, 23px);
+      font-weight: 600;
+      color: #BAE6FD;
+      letter-spacing: 0.6px;
+      margin-bottom: 14px;
+    }
+
+    .hero-desc {
+      max-width: 740px;
+      font-size: 15.5px;
+      color: var(--platinum-mid);
+      margin-bottom: 28px;
+    }
+
+    .hero-cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .btn-primary-hero {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px 30px;
+      border-radius: 16px;
+      font-size: 15.5px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      color: #030711;
+      background: linear-gradient(135deg, #FFFFFF 0%, #7DD3FC 45%, #38BDF8 100%);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 12px 32px rgba(56, 189, 248, 0.38);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-primary-hero:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 40px rgba(56, 189, 248, 0.55);
+    }
+
+    .btn-secondary-hero {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px 26px;
+      border-radius: 16px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ice-white);
+      background: rgba(15, 29, 54, 0.72);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      cursor: pointer;
+      text-decoration: none;
+      backdrop-filter: blur(12px);
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary-hero:hover {
+      background: rgba(2, 132, 199, 0.24);
+      border-color: #38BDF8;
+      transform: translateY(-2px);
+    }
+
+    .section-block {
+      margin-top: 56px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .section-eyebrow {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--sapphire-bright);
+      margin-bottom: 6px;
+    }
+
+    .section-title {
+      font-size: clamp(24px, 4vw, 34px);
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.3px;
+    }
+
+    .section-sub {
+      font-size: 14.5px;
+      color: var(--platinum-mid);
+      margin-top: 6px;
+    }
+
+    .download-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+      gap: 18px;
+    }
+
     .dl-card {
-      background: var(--bg-card);
-      border: 1px solid rgba(56, 189, 248, 0.28);
-      border-radius: 22px; padding: 26px 22px;
-      display: flex; flex-direction: column; justify-content: space-between;
-      transition: transform 0.22s, border-color 0.22s, box-shadow 0.22s;
-      position: relative; overflow: hidden;
+      position: relative;
+      background: linear-gradient(165deg, rgba(16, 32, 60, 0.78) 0%, rgba(7, 15, 30, 0.88) 100%);
+      border: 1px solid var(--border-glass);
+      border-radius: 22px;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backdrop-filter: blur(16px);
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
     }
+
     .dl-card:hover {
-      transform: translateY(-5px);
-      border-color: var(--cyan);
-      box-shadow: 0 14px 34px rgba(56, 189, 248, 0.2);
+      transform: translateY(-4px);
+      border-color: rgba(56, 189, 248, 0.65);
+      box-shadow: 0 18px 42px rgba(2, 132, 199, 0.22);
     }
-    .dl-badge {
-      display: inline-block; align-self: flex-start;
-      padding: 4px 10px; border-radius: 8px;
-      font-size: 10.5px; font-weight: 900; letter-spacing: 0.8px;
-      background: rgba(16, 185, 129, 0.16); color: var(--emerald);
-      border: 1px solid rgba(16, 185, 129, 0.4); margin-bottom: 12px;
+
+    .dl-card.featured {
+      border-color: rgba(56, 189, 248, 0.62);
+      box-shadow: 0 14px 38px rgba(2, 132, 199, 0.24);
     }
-    .dl-card h3 { font-size: 19px; font-weight: 900; color: #FFF; margin-bottom: 6px; }
-    .dl-spec { color: var(--cyan); font-size: 12px; font-weight: 700; margin-bottom: 12px; }
-    .dl-desc { color: var(--text-soft); font-size: 13px; margin-bottom: 20px; }
+
+    .dl-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .dl-icon-box {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      background: rgba(56, 189, 248, 0.14);
+      border: 1px solid rgba(56, 189, 248, 0.32);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--sapphire-bright);
+      flex-shrink: 0;
+    }
+
+    .dl-platform {
+      font-size: 18px;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+
+    .dl-arch {
+      font-size: 12px;
+      color: #7DD3FC;
+      font-weight: 600;
+    }
+
+    .dl-meta {
+      font-size: 13px;
+      color: var(--platinum-mid);
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
     .dl-btn {
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      width: 100%; padding: 13px 18px; border-radius: 14px;
-      background: linear-gradient(135deg, #38BDF8 0%, #0284C7 100%);
-      color: #02050B; font-weight: 900; font-size: 14px;
-      text-decoration: none; box-shadow: 0 0 22px rgba(56, 189, 248, 0.35);
-      transition: filter 0.18s;
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 13px 18px;
+      border-radius: 13px;
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+      color: #030711;
+      background: linear-gradient(135deg, #E0F2FE 0%, #38BDF8 100%);
+      border: none;
+      transition: filter 0.2s ease, transform 0.15s ease;
     }
-    .dl-btn:hover { filter: brightness(1.1); }
 
-    /* Features Grid */
-    .feat-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-      gap: 20px;
+    .dl-btn:hover {
+      filter: brightness(1.08);
+      transform: scale(1.01);
     }
-    .feat-card {
-      background: rgba(10, 19, 36, 0.78);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 18px; padding: 24px;
-    }
-    .feat-card h4 { color: var(--cyan); font-size: 16.5px; font-weight: 800; margin-bottom: 8px; }
-    .feat-card p { color: #CBD5E1; font-size: 13.5px; }
 
-    /* Install Steps */
-    .steps-box {
-      background: var(--bg-card); border: 1px solid rgba(56, 189, 248, 0.24);
-      border-radius: 20px; padding: 28px; margin-top: 24px;
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 18px;
     }
-    .step-item h5 { color: var(--gold); font-size: 14px; font-weight: 900; margin-bottom: 6px; }
-    .step-item p { color: #CBD5E1; font-size: 13px; }
+
+    .bento-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 24px;
+      backdrop-filter: blur(14px);
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .bento-card:hover {
+      border-color: rgba(56, 189, 248, 0.45);
+      transform: translateY(-3px);
+    }
+
+    .bento-badge {
+      display: inline-block;
+      padding: 4px 11px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      background: rgba(56, 189, 248, 0.14);
+      color: #7DD3FC;
+      margin-bottom: 12px;
+    }
+
+    .bento-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+    }
+
+    .bento-text {
+      font-size: 13.8px;
+      color: var(--platinum-mid);
+      line-height: 1.58;
+    }
+
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+    }
+
+    .guide-card {
+      background: rgba(11, 22, 41, 0.68);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .guide-step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(56, 189, 248, 0.18);
+      color: #38BDF8;
+      font-weight: 800;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .guide-card h4 {
+      font-size: 16px;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+    }
+
+    .guide-card p {
+      font-size: 13.2px;
+      color: var(--platinum-mid);
+      line-height: 1.55;
+    }
+
+    .github-showcase {
+      margin-top: 56px;
+      background: linear-gradient(135deg, rgba(14, 30, 58, 0.85) 0%, rgba(5, 12, 26, 0.92) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 24px;
+      padding: 32px 28px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      box-shadow: var(--glow-sapphire);
+    }
+
+    .github-info h3 {
+      font-size: 22px;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 6px;
+    }
+
+    .github-info p {
+      font-size: 14px;
+      color: var(--platinum-mid);
+      max-width: 620px;
+    }
 
     footer {
-      margin-top: 72px; padding: 32px 20px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      text-align: center; color: var(--text-soft); font-size: 13px;
+      margin-top: 64px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(148, 163, 184, 0.12);
+      text-align: center;
+      font-size: 13px;
+      color: #64748B;
     }
-    footer a { color: var(--cyan); text-decoration: none; font-weight: 700; }
+
+    footer strong {
+      color: #CBD5E1;
+    }
+
+    .get-popup-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      background: rgba(2, 6, 15, 0.52);
+      backdrop-filter: blur(6px);
+      transition: opacity 0.25s ease;
+    }
+
+    .get-popup-backdrop.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .get-orixon-popup {
+      position: fixed;
+      z-index: 9999;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(92vw, 440px);
+      background: linear-gradient(165deg, rgba(11, 24, 48, 0.96) 0%, rgba(4, 10, 22, 0.98) 100%);
+      border: 1.5px solid rgba(56, 189, 248, 0.55);
+      border-radius: 24px;
+      box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.85),
+        0 0 45px rgba(56, 189, 248, 0.28);
+      overflow: hidden;
+      user-select: none;
+      touch-action: none;
+      transition: opacity 0.22s ease;
+    }
+
+    .get-orixon-popup.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .popup-drag-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: rgba(56, 189, 248, 0.10);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.20);
+      cursor: grab;
+    }
+
+    .popup-drag-bar:active {
+      cursor: grabbing;
+    }
+
+    .drag-hint {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #BAE6FD;
+      letter-spacing: 0.5px;
+    }
+
+    .popup-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .popup-ctrl-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: rgba(15, 23, 42, 0.75);
+      color: #E2E8F0;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .popup-ctrl-btn:hover {
+      background: rgba(56, 189, 248, 0.25);
+      border-color: #38BDF8;
+    }
+
+    .popup-body {
+      padding: 20px 20px 22px;
+      text-align: center;
+    }
+
+    .popup-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .popup-header-row img {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      border: 1px solid rgba(56, 189, 248, 0.45);
+    }
+
+    .popup-title-col {
+      text-align: left;
+    }
+
+    .popup-title-col h3 {
+      font-size: 20px;
+      font-weight: 900;
+      color: #FFFFFF;
+      letter-spacing: 1px;
+    }
+
+    .popup-title-col span {
+      font-size: 12px;
+      color: #7DD3FC;
+      font-weight: 600;
+    }
+
+    .popup-sub {
+      font-size: 13px;
+      color: var(--platinum-mid);
+      margin-bottom: 16px;
+    }
+
+    .popup-dl-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .popup-dl-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 15px;
+      border-radius: 14px;
+      background: rgba(15, 31, 58, 0.82);
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      text-decoration: none;
+      color: #FFFFFF;
+      transition: all 0.18s ease;
+    }
+
+    .popup-dl-item:hover, .popup-dl-item.primary-os {
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.38), rgba(15, 31, 58, 0.95));
+      border-color: #38BDF8;
+      transform: translateY(-1px);
+    }
+
+    .popup-dl-left {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    .popup-dl-name {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+
+    .popup-dl-desc {
+      font-size: 11.5px;
+      color: #94A3B8;
+    }
+
+    .popup-dl-badge {
+      padding: 6px 12px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #030711;
+      background: linear-gradient(135deg, #E0F2FE, #38BDF8);
+    }
+
+    .floating-get-btn {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      z-index: 9990;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #0284C7 0%, #38BDF8 100%);
+      color: #030711;
+      font-weight: 900;
+      font-size: 14px;
+      border: 1.5px solid #E0F2FE;
+      box-shadow: 0 12px 30px rgba(2, 132, 199, 0.55);
+      cursor: pointer;
+    }
+
+    .floating-get-btn img {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+    }
   </style>
 </head>
 <body>
+  <div class="ambient-grid"></div>
 
-  <nav class="navbar">
-    <a href="#" class="nav-brand">
-      <svg width="34" height="34" viewBox="0 0 100 100" fill="none">
-        <defs>
-          <linearGradient id="navRing" x1="0" y1="0" x2="100" y2="100">
-            <stop offset="0%" stop-color="#0284C7"/>
-            <stop offset="50%" stop-color="#38BDF8"/>
-            <stop offset="100%" stop-color="#F8FAFC"/>
-          </linearGradient>
-        </defs>
-        <circle cx="50" cy="50" r="38" stroke="url(#navRing)" stroke-width="15" stroke-linecap="round"/>
-        <line x1="32" y1="32" x2="68" y2="68" stroke="#E0F2FE" stroke-width="5" stroke-linecap="round"/>
-        <line x1="68" y1="32" x2="32" y2="68" stroke="#E0F2FE" stroke-width="5" stroke-linecap="round"/>
-        <circle cx="50" cy="50" r="5.5" fill="#FFFFFF"/>
-      </svg>
-      <span>ORIXON</span>
-    </a>
-    <div class="nav-links">
-      <a href="#downloads">Downloads</a>
-      <a href="#features">Features</a>
-      <a href="#install">Install Guide</a>
-      <a href="https://github.com/SkRamjan9615/orixon">GitHub</a>
-      <a href="#downloads" class="nav-cta">Get ORIXON</a>
+  <div id="popupBackdrop" class="get-popup-backdrop" onclick="closeGetPopup()"></div>
+
+  <div id="getOrixonPopup" class="get-orixon-popup" role="dialog" aria-label="Get ORIXON">
+    <div id="popupDragBar" class="popup-drag-bar">
+      <div class="drag-hint">
+        <span>⠿</span>
+        <span>GET ORIXON • DRAG TO MOVE</span>
+      </div>
+      <div class="popup-actions">
+        <button class="popup-ctrl-btn" title="Minimize" onclick="closeGetPopup()">—</button>
+        <button class="popup-ctrl-btn" title="Close" onclick="closeGetPopup()">✕</button>
+      </div>
     </div>
-  </nav>
+    <div class="popup-body">
+      <div class="popup-header-row">
+        <img src="assets/orixon-logo.png" alt="ORIXON Logo" />
+        <div class="popup-title-col">
+          <h3>GET ORIXON</h3>
+          <span>v1.0.0 Official Multi-Platform Suite</span>
+        </div>
+      </div>
+      <p class="popup-sub">1-Click Direct Download for Your Device (Move or close this card anytime)</p>
+      <div class="popup-dl-list">
+        <a href="https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon.apk" onclick="return triggerSmartDownload(event, 'phone')" class="popup-dl-item primary-os">
+          <div class="popup-dl-left">
+            <span class="popup-dl-name">Android Phone (APK)</span>
+            <span class="popup-dl-desc">Android 8.0+ • ARM64 &amp; ARMv7 • 35 MB</span>
+          </div>
+          <span class="popup-dl-badge">Download</span>
+        </a>
+        <a href="https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon-Android-TV.apk" onclick="return triggerSmartDownload(event, 'tv')" class="popup-dl-item">
+          <div class="popup-dl-left">
+            <span class="popup-dl-name">Android TV &amp; Google TV</span>
+            <span class="popup-dl-desc">Smart TV Leanback OS &amp; D-Pad Remote</span>
+          </div>
+          <span class="popup-dl-badge">Download</span>
+        </a>
+        <a href="https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon-Windows.zip" class="popup-dl-item">
+          <div class="popup-dl-left">
+            <span class="popup-dl-name">Windows 10 / 11 (64-bit)</span>
+            <span class="popup-dl-desc">Desktop Package (.zip)</span>
+          </div>
+          <span class="popup-dl-badge">Download</span>
+        </a>
+        <a href="https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon-macOS.zip" class="popup-dl-item">
+          <div class="popup-dl-left">
+            <span class="popup-dl-name">macOS (Apple Silicon &amp; Intel)</span>
+            <span class="popup-dl-desc">macOS Package (.zip)</span>
+          </div>
+          <span class="popup-dl-badge">Download</span>
+        </a>
+      </div>
+    </div>
+  </div>
 
-  <div class="container">
+  <button class="floating-get-btn" onclick="openGetPopup()">
+    <img src="assets/orixon-logo.png" alt="O" />
+    <span>Get ORIXON</span>
+  </button>
+
+  <main class="page-wrapper">
     <section class="hero">
-      <div class="logo-wrap">
-        <svg width="114" height="114" viewBox="0 0 120 120" fill="none">
+      <div class="logo-pedestal" title="ORIXON — Ice-Sapphire &amp; Brushed Platinum 3D Folded O Ribbon">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <linearGradient id="orixonGrad" x1="0" y1="0" x2="120" y2="120">
-              <stop offset="0%" stop-color="#0284C7"/>
-              <stop offset="45%" stop-color="#38BDF8"/>
-              <stop offset="75%" stop-color="#F8FAFC"/>
-              <stop offset="100%" stop-color="#0369A1"/>
+            <linearGradient id="sapphireHi" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#E8F8FF" />
+              <stop offset="48%" stop-color="#38BDF8" />
+              <stop offset="100%" stop-color="#0284C7" />
             </linearGradient>
+            <linearGradient id="sapphireMid" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#0369A1" />
+              <stop offset="55%" stop-color="#0EA5E9" />
+              <stop offset="100%" stop-color="#BAE6FD" />
+            </linearGradient>
+            <linearGradient id="platinumBrush" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#FFFFFF" />
+              <stop offset="50%" stop-color="#CBD5E1" />
+              <stop offset="100%" stop-color="#475569" />
+            </linearGradient>
+            <linearGradient id="cobaltShadow" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#0284C7" />
+              <stop offset="100%" stop-color="#0C4A6E" />
+            </linearGradient>
+            <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.55" />
+              <stop offset="100%" stop-color="#0284C7" stop-opacity="0" />
+            </radialGradient>
           </defs>
-          <circle cx="60" cy="60" r="45" stroke="url(#orixonGrad)" stroke-width="18" stroke-linecap="round"/>
-          <line x1="38" y1="38" x2="82" y2="82" stroke="#E0F2FE" stroke-width="5.5" stroke-linecap="round"/>
-          <line x1="82" y1="38" x2="38" y2="82" stroke="#E0F2FE" stroke-width="5.5" stroke-linecap="round"/>
-          <circle cx="60" cy="60" r="6.5" fill="#FFFFFF"/>
+
+          <circle cx="100" cy="100" r="78" fill="url(#coreGlow)" />
+
+          <polygon points="70,22 130,22 117,54 83,54" fill="url(#sapphireHi)" stroke="#E0F2FE" stroke-width="0.8" />
+          <polygon points="130,22 178,70 146,83 117,54" fill="url(#platinumBrush)" stroke="#E0F2FE" stroke-width="0.8" />
+          <polygon points="178,70 178,130 146,117 146,83" fill="url(#sapphireMid)" stroke="#7DD3FC" stroke-width="0.8" />
+          <polygon points="178,130 130,178 117,146 146,117" fill="url(#cobaltShadow)" stroke="#38BDF8" stroke-width="0.8" />
+          <polygon points="130,178 70,178 83,146 117,146" fill="url(#sapphireHi)" stroke="#BAE6FD" stroke-width="0.8" />
+          <polygon points="70,178 22,130 54,117 83,146" fill="url(#platinumBrush)" stroke="#94A3B8" stroke-width="0.8" />
+          <polygon points="22,130 22,70 54,83 54,117" fill="url(#cobaltShadow)" stroke="#38BDF8" stroke-width="0.8" />
+          <polygon points="22,70 70,22 83,54 54,83" fill="url(#sapphireMid)" stroke="#E0F2FE" stroke-width="0.8" />
+
+          <polygon points="100,92 134,66 108,100 134,134 100,108 66,134 92,100 66,66" fill="url(#sapphireHi)" opacity="0.95" />
+          <polygon points="100,95 124,76 105,100 124,124 100,105 76,124 95,100 76,76" fill="#FFFFFF" />
+          <circle cx="100" cy="100" r="5.5" fill="#FFFFFF" />
         </svg>
       </div>
-      <h1>ORIXON</h1>
-      <p class="tagline">ORIXON — One Platform. Endless Possibilities.</p>
-      <div class="meta-row">
-        <span class="pill-version">VERSION 1.0.0 OFFICIAL</span>
-        <span class="pill-author"><b>★ AUTHOR</b> &nbsp;•&nbsp; SK RAMJAN ALI</span>
+
+      <div class="hero-badges">
+        <span class="pill-badge"><span class="dot-live"></span> v1.0.0 Official Release</span>
+        <span class="pill-badge author">Author • Sk Ramjan Ali</span>
+      </div>
+
+      <h1 class="hero-title">ORIXON</h1>
+      <p class="hero-tagline">One Platform. Endless Possibilities.</p>
+      <p class="hero-desc">
+        Next-generation Smart TV OS Launcher, Live IPTV &amp; M3U Studio with 128 MB Stream Cache &amp; ClearKey DRM,
+        4K HDR10 &amp; Hardware-Gyroscope VR 360° / 3D Headset Media Hub, Global Cloud Share Hub, and DuckDuckGo WebX Privacy Browser.
+      </p>
+
+      <div class="hero-cta-row">
+        <a href="https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon.apk" onclick="return triggerSmartDownload(event, 'phone')" class="btn-primary-hero">
+          <span>⬇ Download for Android Phone (APK)</span>
+        </a>
+        <button type="button" onclick="openGetPopup()" class="btn-secondary-hero">
+          <span>✦ Get ORIXON (All Platforms)</span>
+        </button>
       </div>
     </section>
 
-    <!-- 1-CLICK MULTI-PLATFORM DOWNLOAD HUB -->
-    <h2 id="downloads" class="sec-title">1-Click Official Download Center</h2>
-    <p class="sec-sub">Download and install the official ORIXON v1.0.0 release directly for your Android Phone, Android TV / Google TV, Windows PC, or Mac.</p>
+    <section id="downloads" class="section-block">
+      <div class="section-header">
+        <div class="section-eyebrow">1-Click Direct Installation</div>
+        <h2 class="section-title">Download ORIXON for Every Screen</h2>
+        <p class="section-sub">Verified direct binary downloads from Official Release v1.0.0.</p>
+      </div>
 
-    <div class="dl-grid">
-      <div class="dl-card">
-        <div>
-          <span class="dl-badge">DIRECT APK INSTALLER</span>
-          <h3>📱 Android Phone</h3>
-          <div class="dl-spec">Android 8.0+ • ARM64 • Orixon.apk</div>
-          <p class="dl-desc">Full mobile touch, gyroscope VR 360° & 3D Headset player, IPTV studio, Cloud File Hub & WebX Browser.</p>
+      <div class="download-grid">
+        <div class="dl-card featured">
+          <div>
+            <div class="dl-top">
+              <div class="dl-icon-box">📱</div>
+              <div>
+                <div class="dl-platform">Android Phone</div>
+                <div class="dl-arch">ARM64-v8a &amp; ARMv7 • Direct APK</div>
+              </div>
+            </div>
+            <p class="dl-meta">
+              Full touchscreen &amp; 360° sensor orientation, 4K HDR10 Media Hub, Live TV M3U Studio, VR 3D Headset gyro mode, and Cloud Share Hub.
+            </p>
+          </div>
+          <a href="https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon.apk" onclick="return triggerSmartDownload(event, 'phone')" class="dl-btn">
+            <span>Download Orixon.apk (35 MB)</span>
+          </a>
         </div>
-        <a class="dl-btn" href="https://github.com/SkRamjan9615/orixon/releases/latest/download/Orixon.apk" download="Orixon.apk">⬇ Download for Android Phone</a>
-      </div>
 
-      <div class="dl-card">
-        <div>
-          <span class="dl-badge">SMART TV OS LAUNCHER</span>
-          <h3>📺 Android TV & Google TV</h3>
-          <div class="dl-spec">Leanback TV OS • D-Pad Remote Ready</div>
-          <p class="dl-desc">10-foot Smart TV Launcher, Live TV zapping, 128 MB anti-buffer cache, Dolby Atmos eARC & Ambient Screensaver.</p>
+        <div class="dl-card">
+          <div>
+            <div class="dl-top">
+              <div class="dl-icon-box">📺</div>
+              <div>
+                <div class="dl-platform">Android TV / Google TV</div>
+                <div class="dl-arch">Leanback TV OS • D-Pad Remote</div>
+              </div>
+            </div>
+            <p class="dl-meta">
+              10-foot Smart TV Launcher interface with D-Pad focus navigation, voice search auto-play, and hardware-accelerated IPTV playback.
+            </p>
+          </div>
+          <a href="https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon-Android-TV.apk" onclick="return triggerSmartDownload(event, 'tv')" class="dl-btn">
+            <span>Download Android TV APK</span>
+          </a>
         </div>
-        <a class="dl-btn" href="https://github.com/SkRamjan9615/orixon/releases/latest/download/Orixon-Android-TV.apk" download="Orixon-Android-TV.apk">⬇ Download for Android TV</a>
-      </div>
 
-      <div class="dl-card">
-        <div>
-          <span class="dl-badge">WINDOWS DESKTOP</span>
-          <h3>🪟 Windows 10 / 11</h3>
-          <div class="dl-spec">64-Bit x64 • Keyboard & Mouse Ready</div>
-          <p class="dl-desc">Desktop media center, M3U playlist studio, 4K HDR10 hardware playback, and LAN/FTP wireless file server.</p>
+        <div class="dl-card">
+          <div>
+            <div class="dl-top">
+              <div class="dl-icon-box">💻</div>
+              <div>
+                <div class="dl-platform">Windows 10 / 11</div>
+                <div class="dl-arch">x86_64 Desktop Edition (.zip)</div>
+              </div>
+            </div>
+            <p class="dl-meta">
+              Widescreen desktop workstation layout with keyboard shortcuts, multi-stream IPTV studio, and local network FTP/Web portal sharing.
+            </p>
+          </div>
+          <a href="https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon-Windows.zip" class="dl-btn">
+            <span>Download for Windows</span>
+          </a>
         </div>
-        <a class="dl-btn" href="https://github.com/SkRamjan9615/orixon/releases/latest/download/Orixon-Windows.zip" download="Orixon-Windows.zip">⬇ Download for Windows</a>
-      </div>
 
-      <div class="dl-card">
-        <div>
-          <span class="dl-badge">MACOS UNIVERSAL</span>
-          <h3>🍎 macOS (Mac)</h3>
-          <div class="dl-spec">Apple Silicon & Intel • macOS 12+</div>
-          <p class="dl-desc">Native macOS media hub, IPTV stream engine, cross-network file sharing, and DuckDuckGo privacy browser.</p>
+        <div class="dl-card">
+          <div>
+            <div class="dl-top">
+              <div class="dl-icon-box">🍎</div>
+              <div>
+                <div class="dl-platform">macOS</div>
+                <div class="dl-arch">Apple Silicon &amp; Intel (.zip)</div>
+              </div>
+            </div>
+            <p class="dl-meta">
+              Fluid Metal-rendered playback, universal search, custom dynamic themes, and seamless wireless file transfers across Apple devices.
+            </p>
+          </div>
+          <a href="https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon-macOS.zip" class="dl-btn">
+            <span>Download for macOS</span>
+          </a>
         </div>
-        <a class="dl-btn" href="https://github.com/SkRamjan9615/orixon/releases/latest/download/Orixon-macOS.zip" download="Orixon-macOS.zip">⬇ Download for macOS</a>
       </div>
-    </div>
+    </section>
 
-    <!-- FEATURES SHOWCASE -->
-    <h2 id="features" class="sec-title">Engineered for Flagship Performance</h2>
-    <p class="sec-sub">Every module inside ORIXON is built from the ground up for speed, visual clarity, and universal hardware control.</p>
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-eyebrow">Flagship Architecture</div>
+        <h2 class="section-title">Built for Cinema, Speed &amp; Privacy</h2>
+      </div>
 
-    <div class="feat-grid">
-      <div class="feat-card">
-        <h4>📺 Live TV & Custom .M3U Studio</h4>
-        <p>128 MB RAM stream cache for zero buffering, built-in #KODIPROP ClearKey DRM decryptor, per-category Select-All channel studio, and custom .M3U playlist export.</p>
-      </div>
-      <div class="feat-card">
-        <h4>🎬 4K HDR10 & Gyro VR 360° / 3D Headset</h4>
-        <p>Hardware-accelerated 4K video decoding, GPU HDR10 Vivid color engine, 60fps hardware gyroscope VR 360° sphere, and calibrated Side-by-Side 3D VR Headset lenses.</p>
-      </div>
-      <div class="feat-card">
-        <h4>🔊 200% Audio Boost & Dolby Atmos eARC</h4>
-        <p>Two-tier volume control (0%–100% hardware volume + 100%–200% software boost) with Dolby Atmos, TrueHD, EAC3, DTS-HD, and HDMI eARC passthrough.</p>
-      </div>
-      <div class="feat-card">
-        <h4>☁️ Any-Network Global Cloud Share Hub</h4>
-        <p>Send and receive files across any Wi-Fi or mobile network using a 6-digit Receive Code or direct browser link, plus Orixon Direct Beam, Wi-Fi Portal & FTP Server.</p>
-      </div>
-      <div class="feat-card">
-        <h4>🦆 WebX DuckDuckGo Privacy Browser</h4>
-        <p>Integrated tracker-blocking DuckDuckGo browser with centered search bar, customizable speed-dial shortcuts, and built-in media download manager.</p>
-      </div>
-      <div class="feat-card">
-        <h4>💾 1-Click Full Backup & File Hub Restore</h4>
-        <p>Export all your playlists, channels, and custom settings into a single backup file and restore them anytime directly through Orixon File Hub.</p>
-      </div>
-    </div>
+      <div class="bento-grid">
+        <div class="bento-card">
+          <span class="bento-badge">Live TV Engine</span>
+          <h3 class="bento-title">128 MB Stream Cache &amp; ClearKey DRM</h3>
+          <p class="bento-text">
+            Parses standard M3U/M3U8, #KODIPROP ClearKey DRM keys, and #EXTVLCOPT custom HTTP headers with smart 9-profile User-Agent rotation and per-category playlist export.
+          </p>
+        </div>
 
-    <!-- QUICK INSTALLATION GUIDE -->
-    <h2 id="install" class="sec-title">Quick Installation Guide</h2>
-    <div class="steps-box">
-      <div class="step-item">
-        <h5>1. Android Phone / Tablet</h5>
-        <p>Tap "Download for Android Phone" above to download Orixon.apk, open the downloaded file, and tap Install.</p>
+        <div class="bento-card">
+          <span class="bento-badge">4K Media Hub</span>
+          <h3 class="bento-title">HDR10+, VR 360° &amp; 3D Headset Gyro</h3>
+          <p class="bento-text">
+            Ultra-transparent glass timeline with zero-lag scrubbing, dedicated 22% left/right edge zones for 200% brightness and 200% software audio boost, Picture-in-Picture, and 60fps gyroscope VR.
+          </p>
+        </div>
+
+        <div class="bento-card">
+          <span class="bento-badge">File &amp; Share Hub</span>
+          <h3 class="bento-title">Global Cloud Share (Send &amp; Receive)</h3>
+          <p class="bento-text">
+            Transfer files anywhere in the world via 6-digit Receive Codes or direct browser links, alongside Orixon Direct Beam, Wi-Fi Web Portal (:8888), and Wireless FTP (:2121).
+          </p>
+        </div>
+
+        <div class="bento-card">
+          <span class="bento-badge">WebX Privacy Browser</span>
+          <h3 class="bento-title">Pure DuckDuckGo Privacy Engine</h3>
+          <p class="bento-text">
+            Minimal centered DuckDuckGo search interface with built-in ad &amp; popup shield, desktop user-agent toggle, and customizable quick-access site shortcuts.
+          </p>
+        </div>
+
+        <div class="bento-card">
+          <span class="bento-badge">Universal Voice Search</span>
+          <h3 class="bento-title">Speak to Auto-Play Channels &amp; Media</h3>
+          <p class="bento-text">
+            Smart suggestion-only search across TV channels, local videos, files, settings, and WebX. Speaking a channel name or number launches full-screen playback immediately.
+          </p>
+        </div>
+
+        <div class="bento-card">
+          <span class="bento-badge">Backup &amp; OTA Update</span>
+          <h3 class="bento-title">1-Click Full Backup &amp; Silent Updater</h3>
+          <p class="bento-text">
+            Export all playlists, channels, and settings into a single JSON backup, restore directly via File Hub, and install new releases silently inside Settings ➔ About.
+          </p>
+        </div>
       </div>
-      <div class="step-item">
-        <h5>2. Android TV / Google TV</h5>
-        <p>Open this page on your TV browser or Downloader app, download Orixon-Android-TV.apk, and install to launch ORIXON from your TV home screen.</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-eyebrow">Quick Setup</div>
+        <h2 class="section-title">Installation Guide</h2>
       </div>
-      <div class="step-item">
-        <h5>3. Windows & macOS</h5>
-        <p>Download the Windows or macOS package above, extract the archive, and run the ORIXON launcher executable.</p>
+
+      <div class="guide-grid">
+        <div class="guide-card">
+          <div class="guide-step-num">1</div>
+          <h4>Android Phone</h4>
+          <p>Tap "Download for Android Phone", open Orixon.apk, allow "Install unknown apps" if prompted, and launch ORIXON.</p>
+        </div>
+        <div class="guide-card">
+          <div class="guide-step-num">2</div>
+          <h4>Android TV / Google TV</h4>
+          <p>Download Orixon-Android-TV.apk or send it from your phone using Orixon Share Hub (:8888), then install and set as TV launcher.</p>
+        </div>
+        <div class="guide-card">
+          <div class="guide-step-num">3</div>
+          <h4>Windows 10 / 11</h4>
+          <p>Download Orixon-Windows.zip, extract the archive, and follow the included 1-click native runner or WSA installation guide.</p>
+        </div>
+        <div class="guide-card">
+          <div class="guide-step-num">4</div>
+          <h4>macOS</h4>
+          <p>Download Orixon-macOS.zip, extract on Apple Silicon or Intel Mac, and launch or build the native macOS bundle.</p>
+        </div>
       </div>
-      <div class="step-item">
-        <h5>4. In-App Auto Updates</h5>
-        <p>Inside ORIXON, go to Settings ➔ About and tap "Update" beside the version badge anytime to update directly inside the app.</p>
+    </section>
+
+    <section class="github-showcase">
+      <div class="github-info">
+        <h3>Open-Source Engineering • Apache License 2.0</h3>
+        <p>
+          Explore the complete Flutter &amp; Kotlin source code, inspect release assets, or report issues on the official ORIXON GitHub repository. Protected under the ORIXON Brand &amp; Logo Policy.
+        </p>
       </div>
-    </div>
+      <a href="https://github.com/SkRamjan9615/orixon" target="_blank" rel="noopener" class="btn-secondary-hero">
+        <span>★ View Official GitHub Repository</span>
+      </a>
+    </section>
 
     <footer>
-      Copyright © 2026 <strong>ORIXON</strong> • Author: <strong>Sk Ramjan Ali</strong> • All Rights Reserved.<br>
-      Source Code Licensed under <a href="https://github.com/SkRamjan9615/orixon/blob/main/LICENSE">Apache License 2.0</a> • <a href="https://github.com/SkRamjan9615/orixon/blob/main/BRAND_POLICY.md">ORIXON Brand Policy</a> • <a href="privacy.html">Privacy & Legal Notice</a>
+      <p>
+        <strong>ORIXON v1.0.0</strong> — Created by <strong>Sk Ramjan Ali</strong> •
+        Licensed under Apache License 2.0 • Copyright © 2026 ORIXON. All Rights Reserved.
+      </p>
     </footer>
-  </div>
+  </main>
 
+  <script>
+    const popup = document.getElementById('getOrixonPopup');
+    const backdrop = document.getElementById('popupBackdrop');
+    const dragBar = document.getElementById('popupDragBar');
+
+    function closeGetPopup() {
+      popup.classList.add('hidden');
+      backdrop.classList.add('hidden');
+    }
+
+    function openGetPopup() {
+      popup.classList.remove('hidden');
+      backdrop.classList.remove('hidden');
+    }
+
+    let isDragging = false;
+    let startX = 0, startY = 0;
+    let origLeft = 0, origTop = 0;
+
+    function startDrag(clientX, clientY) {
+      isDragging = true;
+      const rect = popup.getBoundingClientRect();
+      popup.style.transform = 'none';
+      popup.style.left = rect.left + 'px';
+      popup.style.top = rect.top + 'px';
+      origLeft = rect.left;
+      origTop = rect.top;
+      startX = clientX;
+      startY = clientY;
+      backdrop.classList.add('hidden');
+    }
+
+    function moveDrag(clientX, clientY) {
+      if (!isDragging) return;
+      const dx = clientX - startX;
+      const dy = clientY - startY;
+      const maxX = window.innerWidth - popup.offsetWidth - 8;
+      const maxY = window.innerHeight - popup.offsetHeight - 8;
+      const nextX = Math.max(8, Math.min(maxX, origLeft + dx));
+      const nextY = Math.max(8, Math.min(maxY, origTop + dy));
+      popup.style.left = nextX + 'px';
+      popup.style.top = nextY + 'px';
+    }
+
+    function endDrag() {
+      isDragging = false;
+    }
+
+    dragBar.addEventListener('mousedown', (e) => {
+      if (e.target.tagName === 'BUTTON') return;
+      startDrag(e.clientX, e.clientY);
+    });
+    window.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
+    window.addEventListener('mouseup', endDrag);
+
+    dragBar.addEventListener('touchstart', (e) => {
+      if (e.target.tagName === 'BUTTON') return;
+      const t = e.touches[0];
+      startDrag(t.clientX, t.clientY);
+    }, { passive: true });
+    window.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      const t = e.touches[0];
+      moveDrag(t.clientX, t.clientY);
+    }, { passive: true });
+    window.addEventListener('touchend', endDrag);
+
+    async function triggerSmartDownload(e, type) {
+      e.preventDefault();
+      try {
+        const apiRes = await fetch('https://api.github.com/repos/SkRamjan9615/orixon/releases/latest');
+        if (apiRes.ok) {
+          const data = await apiRes.json();
+          const assets = data.assets || [];
+          const wanted = type === 'phone' ? 'Orixon.apk' : 'Orixon-Android-TV.apk';
+          const found = assets.find(a => a.name === wanted && a.state === 'uploaded')
+                     || assets.find(a => a.name === 'Orixon-Android-TV.apk' && a.state === 'uploaded')
+                     || assets.find(a => a.name.endsWith('.apk') && a.state === 'uploaded');
+          if (found && found.browser_download_url) {
+            window.location.href = found.browser_download_url;
+            return false;
+          }
+        }
+      } catch (_) {}
+
+      window.location.href = 'https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon-Android-TV.apk';
+      return false;
+    }
+  </script>
 </body>
 </html>
