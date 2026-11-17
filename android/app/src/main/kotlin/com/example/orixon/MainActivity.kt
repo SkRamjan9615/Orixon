@@ -1,4 +1,8 @@
 package com.example.orixon
+import android.view.OrientationEventListener
+import android.database.sqlite.SQLiteDatabase
+import android.database.ContentObserver
+import android.content.pm.ActivityInfo
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -168,6 +172,7 @@ class MainActivity : FlutterActivity(), SensorEventListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        startFullAppGyroEngine()
         forceStartupVolumeTo75Percent()
         mainHandler.postDelayed({ forceStartupVolumeTo75Percent() }, 150)
         mainHandler.postDelayed({ forceStartupVolumeTo75Percent() }, 400)
@@ -176,6 +181,7 @@ class MainActivity : FlutterActivity(), SensorEventListener {
 
     override fun onResume() {
         super.onResume()
+        startFullAppGyroEngine()
         enableNetworkTurboMode()
     }
 
@@ -556,6 +562,7 @@ class MainActivity : FlutterActivity(), SensorEventListener {
                     } catch (_: Throwable) {}
                     result.success(deleted)
                 }
+                "setTvInterfaceMode" -> { isTvInterfaceActive = call.argument<Boolean>("enabled") ?: false; applyGyroBaselineMode(); result.success(true) }
                 "hasAllFilesPermission" -> result.success(hasAllFilesPermission())
                 "requestAllFilesPermission" -> { requestAllFilesPermission(); result.success(true) }
                 "getStorageRoots" -> result.success(getStorageRoots())
