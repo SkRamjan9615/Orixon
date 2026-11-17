@@ -13,9 +13,11 @@ import '../../local_media/presentation/local_media_player_screen.dart';
 import 'file_hub_services.dart';
 
 class FileHubScreen extends StatefulWidget {
-  const FileHubScreen({super.key, this.database, this.initialShareFilePath});
+  const FileHubScreen({super.key, this.database, this.initialShareFilePath, this.initialDirectoryPath, this.pickFileMode = false});
   final AppDatabase? database;
   final String? initialShareFilePath;
+  final String? initialDirectoryPath;
+  final bool pickFileMode;
 
   @override
   State<FileHubScreen> createState() => _FileHubScreenState();
@@ -101,6 +103,17 @@ class _FileHubScreenState extends State<FileHubScreen> {
         widget.initialShareFilePath!.trim().isNotEmpty) {
       _activeSection = _FileSection.shareHub;
       _selectedPaths.add(widget.initialShareFilePath!.trim());
+    }
+    if (widget.initialDirectoryPath != null &&
+        widget.initialDirectoryPath!.trim().isNotEmpty) {
+      final dir = Directory(widget.initialDirectoryPath!.trim());
+      if (!dir.existsSync()) {
+        try {
+          dir.createSync(recursive: true);
+        } catch (_) {}
+      }
+      _activeSection = _FileSection.explorer;
+      _currentPath = dir.path;
     }
     _initFileHub();
   }
@@ -306,6 +319,10 @@ class _FileHubScreenState extends State<FileHubScreen> {
   }
 
   Future<void> _onTapEntity(FileSystemEntity entity) async {
+    if (widget.pickFileMode && entity is File) {
+      Navigator.of(context).pop(entity.path);
+      return;
+    }
     if (_selectedPaths.isNotEmpty) {
       setState(() => _selectedPaths.contains(entity.path) ? _selectedPaths.remove(entity.path) : _selectedPaths.add(entity.path));
       return;

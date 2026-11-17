@@ -1,3 +1,4 @@
+import '../../file_hub/presentation/file_hub_screen.dart';
 import 'dart:io';
 import 'dart:convert';
 
@@ -634,18 +635,124 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     if (title == 'Export settings') {
-      final jsonStr = const JsonEncoder.withIndent('  ').convert(_values);
-      await Clipboard.setData(ClipboardData(text: jsonStr));
-      _showToast('Settings backup copied to clipboard');
+      try {
+        final backupDir = Directory(
+          Platform.isAndroid
+              ? '/storage/emulated/0/Download/Orixon_Backups'
+              : '${Platform.environment['USERPROFILE'] ?? Platform.environment['HOME'] ?? Directory.current.path}/Downloads/Orixon_Backups',
+        );
+        if (!backupDir.existsSync()) {
+          backupDir.createSync(recursive: true);
+        }
+
+        final settingsRows =
+            await widget.database.select(widget.database.appSettings).get();
+        final playlistRows =
+            await widget.database.select(widget.database.playlists).get();
+        final channelRows =
+            await widget.database.select(widget.database.channels).get();
+        final mediaRows =
+            await widget.database.select(widget.database.mediaFiles).get();
+
+        final payload = <String, dynamic>{
+          'orixonBackupFormat': 2,
+          'exportedAt': DateTime.now().toIso8601String(),
+          'appSettings': settingsRows.map((r) => r.toJson()).toList(),
+          'playlists': playlistRows.map((r) => r.toJson()).toList(),
+          'channels': channelRows.map((r) => r.toJson()).toList(),
+          'mediaFiles': mediaRows.map((r) => r.toJson()).toList(),
+        };
+
+        final stamp = DateTime.now()
+            .toIso8601String()
+            .replaceAll(RegExp(r'[:.]'), '-')
+            .substring(0, 19);
+        final outFile = File('${backupDir.path}/ORIXON_Backup_$stamp.json');
+        final jsonStr = const JsonEncoder.withIndent('  ').convert(payload);
+        await outFile.writeAsString(jsonStr);
+
+        _showToast(
+          'Exported ${playlistRows.length} playlists, ${channelRows.length} channels & ${settingsRows.length} settings to Orixon_Backups!',
+        );
+      } catch (e) {
+        _showToast('Export failed: $e', isError: true);
+      }
       return;
     }
 
     if (title == 'Restore settings') {
-      final clip = await Clipboard.getData(Clipboard.kTextPlain);
-      final text = clip?.text?.trim() ?? '';
-      if (text.startsWith('{')) {
-        try {
-          final decoded = jsonDecode(text) as Map<String, dynamic>;
+      try {
+        final backupDir = Directory(
+          Platform.isAndroid
+              ? '/storage/emulated/0/Download/Orixon_Backups'
+              : '${Platform.environment['USERPROFILE'] ?? Platform.environment['HOME'] ?? Directory.current.path}/Downloads/Orixon_Backups',
+        );
+        if (!backupDir.existsSync()) {
+          backupDir.createSync(recursive: true);
+        }
+
+        if (!mounted) return;
+        final pickedPath = await Navigator.of(context).push<String>(
+          MaterialPageRoute<String>(
+            builder: (_) => FileHubScreen(
+              database: widget.database,
+              initialDirectoryPath: backupDir.path,
+              pickFileMode: true,
+            ),
+          ),
+        );
+
+        if (pickedPath == null || pickedPath.trim().isEmpty) return;
+        final file = File(pickedPath.trim());
+        if (!file.existsSync()) {
+          _showToast('Selected backup file does not exist', isError: true);
+          return;
+        }
+
+        final rawText = (await file.readAsString()).trim();
+        final decoded = jsonDecode(rawText) as Map<String, dynamic>;
+
+        int sCount = 0;
+        int pCount = 0;
+        int cCount = 0;
+
+        if (decoded.containsKey('orixonBackupFormat')) {
+          final sList = (decoded['appSettings'] as List?) ?? const [];
+          for (final item in sList) {
+            final m = Map<String, dynamic>.from(item as Map);
+            await widget.database
+                .into(widget.database.appSettings)
+                .insertOnConflictUpdate(AppSetting.fromJson(m));
+            sCount++;
+          }
+
+          final pList = (decoded['playlists'] as List?) ?? const [];
+          for (final item in pList) {
+            final m = Map<String, dynamic>.from(item as Map);
+            await widget.database
+                .into(widget.database.playlists)
+                .insertOnConflictUpdate(Playlist.fromJson(m));
+            pCount++;
+          }
+
+          final cList = (decoded['channels'] as List?) ?? const [];
+          for (final item in cList) {
+            final m = Map<String, dynamic>.from(item as Map);
+            await widget.database
+                .into(widget.database.channels)
+                .insertOnConflictUpdate(Channel.fromJson(m));
+            cCount++;
+          }
+
+          final mList = (decoded['mediaFiles'] as List?) ?? const [];
+          for (final item in mList) {
+            final m = Map<String, dynamic>.from(item as Map);
+            await widget.database
+                .into(widget.database.mediaFiles)
+                .insertOnConflictUpdate(MediaFile.fromJson(m));
+          }
+        } else {
+          // Legacy key-value settings backup support
           for (final entry in decoded.entries) {
             final parts = entry.key.split('::');
             final cat = parts.isNotEmpty ? parts.first : 'System & Advanced';
@@ -658,14 +765,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     category: cat,
                   ),
                 );
+            sCount++;
           }
-          await _loadSettings();
-    _silentCheckUpdateStatus();
-          _showToast('Restored ${decoded.length} settings from backup');
-          return;
-        } catch (_) {}
+        }
+
+        await _loadSettings();
+        _showToast(
+          'Restored $pCount playlists, $cCount channels & $sCount settings!',
+        );
+      } catch (e) {
+        _showToast('Invalid backup file: $e', isError: true);
       }
-      _showToast('No valid settings backup found in clipboard', isError: true);
     }
   }
 
