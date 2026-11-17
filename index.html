@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   <title>ORIXON — One Platform. Endless Possibilities.</title>
   <meta name="description" content="ORIXON v1.0.0 — Flagship Smart TV OS Launcher, IPTV & M3U Studio, 4K HDR10 & VR 360/3D Headset Media Hub, Global Cloud Share Hub, and DuckDuckGo Privacy Browser." />
-  <link rel="icon" type="image/png" href="assets/orixon-logo.png?v=3" />
+  <link rel="icon" type="image/png" href="assets/orixon-logo.png" />
   <style>
     :root {
       --bg-deep: #030711;
@@ -78,32 +78,31 @@
 
     .logo-pedestal {
       position: relative;
-      width: 136px;
-      height: 136px;
+      width: 132px;
+      height: 132px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 24px;
-      border-radius: 32px;
-      overflow: hidden;
-      background: #050C1A;
-      border: 1.5px solid rgba(56, 189, 248, 0.45);
+      border-radius: 34px;
+      background: radial-gradient(circle at 35% 25%, #0F2547 0%, #050C1A 75%, #02050B 100%);
+      border: 1.5px solid rgba(56, 189, 248, 0.42);
       box-shadow:
-        0 0 55px rgba(56, 189, 248, 0.35),
-        0 18px 40px rgba(0, 0, 0, 0.78);
+        0 0 55px rgba(56, 189, 248, 0.32),
+        0 18px 40px rgba(0, 0, 0, 0.75),
+        inset 0 1px 1px rgba(255, 255, 255, 0.28);
       animation: floatLogo 5s ease-in-out infinite;
-    }
-
-    .logo-pedestal img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
     }
 
     @keyframes floatLogo {
       0%, 100% { transform: translateY(0px); }
       50% { transform: translateY(-6px); }
+    }
+
+    .logo-pedestal svg {
+      width: 102px;
+      height: 102px;
+      filter: drop-shadow(0 6px 18px rgba(56, 189, 248, 0.45));
     }
 
     .hero-badges {
@@ -576,11 +575,10 @@
     }
 
     .popup-header-row img {
-      width: 52px;
-      height: 52px;
-      border-radius: 13px;
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
       border: 1px solid rgba(56, 189, 248, 0.45);
-      object-fit: cover;
     }
 
     .popup-title-col {
@@ -677,10 +675,9 @@
     }
 
     .floating-get-btn img {
-      width: 26px;
-      height: 26px;
+      width: 24px;
+      height: 24px;
       border-radius: 6px;
-      object-fit: cover;
     }
   </style>
 </head>
@@ -702,7 +699,7 @@
     </div>
     <div class="popup-body">
       <div class="popup-header-row">
-        <img src="assets/orixon-logo.png?v=3" alt="ORIXON Logo" />
+        <img src="assets/orixon-logo.png" alt="ORIXON Logo" />
         <div class="popup-title-col">
           <h3>GET ORIXON</h3>
           <span>v1.0.0 Official Multi-Platform Suite</span>
@@ -743,14 +740,55 @@
   </div>
 
   <button class="floating-get-btn" onclick="openGetPopup()">
-    <img src="assets/orixon-logo.png?v=3" alt="O" />
+    <img src="assets/orixon-logo.png" alt="O" />
     <span>Get ORIXON</span>
   </button>
 
   <main class="page-wrapper">
     <section class="hero">
-      <div class="logo-pedestal" title="ORIXON Official App Icon">
-        <img src="assets/orixon-logo.png?v=3" alt="ORIXON Logo" />
+      <div class="logo-pedestal" title="ORIXON — Ice-Sapphire &amp; Brushed Platinum 3D Folded O Ribbon">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="sapphireHi" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#E8F8FF" />
+              <stop offset="48%" stop-color="#38BDF8" />
+              <stop offset="100%" stop-color="#0284C7" />
+            </linearGradient>
+            <linearGradient id="sapphireMid" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#0369A1" />
+              <stop offset="55%" stop-color="#0EA5E9" />
+              <stop offset="100%" stop-color="#BAE6FD" />
+            </linearGradient>
+            <linearGradient id="platinumBrush" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#FFFFFF" />
+              <stop offset="50%" stop-color="#CBD5E1" />
+              <stop offset="100%" stop-color="#475569" />
+            </linearGradient>
+            <linearGradient id="cobaltShadow" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#0284C7" />
+              <stop offset="100%" stop-color="#0C4A6E" />
+            </linearGradient>
+            <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.55" />
+              <stop offset="100%" stop-color="#0284C7" stop-opacity="0" />
+            </radialGradient>
+          </defs>
+
+          <circle cx="100" cy="100" r="78" fill="url(#coreGlow)" />
+
+          <polygon points="70,22 130,22 117,54 83,54" fill="url(#sapphireHi)" stroke="#E0F2FE" stroke-width="0.8" />
+          <polygon points="130,22 178,70 146,83 117,54" fill="url(#platinumBrush)" stroke="#E0F2FE" stroke-width="0.8" />
+          <polygon points="178,70 178,130 146,117 146,83" fill="url(#sapphireMid)" stroke="#7DD3FC" stroke-width="0.8" />
+          <polygon points="178,130 130,178 117,146 146,117" fill="url(#cobaltShadow)" stroke="#38BDF8" stroke-width="0.8" />
+          <polygon points="130,178 70,178 83,146 117,146" fill="url(#sapphireHi)" stroke="#BAE6FD" stroke-width="0.8" />
+          <polygon points="70,178 22,130 54,117 83,146" fill="url(#platinumBrush)" stroke="#94A3B8" stroke-width="0.8" />
+          <polygon points="22,130 22,70 54,83 54,117" fill="url(#cobaltShadow)" stroke="#38BDF8" stroke-width="0.8" />
+          <polygon points="22,70 70,22 83,54 54,83" fill="url(#sapphireMid)" stroke="#E0F2FE" stroke-width="0.8" />
+
+          <polygon points="100,92 134,66 108,100 134,134 100,108 66,134 92,100 66,66" fill="url(#sapphireHi)" opacity="0.95" />
+          <polygon points="100,95 124,76 105,100 124,124 100,105 76,124 95,100 76,76" fill="#FFFFFF" />
+          <circle cx="100" cy="100" r="5.5" fill="#FFFFFF" />
+        </svg>
       </div>
 
       <div class="hero-badges">
@@ -793,7 +831,7 @@
               </div>
             </div>
             <p class="dl-meta">
-              Full touchscreen &amp; 360° hardware gyro orientation, 4K HDR10 Media Hub, Live TV M3U Studio, VR 3D Headset gyro mode, and Cloud Share Hub.
+              Full touchscreen &amp; 360° sensor orientation, 4K HDR10 Media Hub, Live TV M3U Studio, VR 3D Headset gyro mode, and Cloud Share Hub.
             </p>
           </div>
           <a href="https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon.apk" onclick="return triggerSmartDownload(event, 'phone')" class="dl-btn">
