@@ -58,6 +58,134 @@ import java.util.concurrent.Executors
 
 class MainActivity : FlutterActivity(), SensorEventListener {
 
+    // === BEGIN FULL APP GYRO ENGINE ===
+    private var fullAppGyroListener: OrientationEventListener? = null
+    private var autoRotateObserver: ContentObserver? = null
+    private var isTvInterfaceActive: Boolean = false
+    private var lastAppliedGyroOrientation: Int = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+    private var lastDbCheckMs: Long = 0L
+
+    private fun checkTvInterfaceFromSqlite(): Boolean {
+        try {
+            val candidates = listOf(
+                File(applicationInfo.dataDir, "app_flutter/orixon.sqlite"),
+                File(applicationInfo.dataDir, "app_flutter/app_database.sqlite"),
+                getDatabasePath("orixon.sqlite"),
+                getDatabasePath("app_database.sqlite"),
+                getDatabasePath("orixon.db")
+            )
+            for (f in candidates) {
+                if (f != null && f.exists()) {
+                    val db = SQLiteDatabase.openDatabase(f.absolutePath, null, SQLiteDatabase.OPEN_READONLY)
+                    val c = db.rawQuery("SELECT value FROM app_settings WHERE key IN ('Android TV interface', 'tv_interface_mode') LIMIT 1", null)
+                    var result = false
+                    if (c.moveToFirst()) {
+                        val v = c.getString(0)?.trim()?.lowercase() ?: "false"
+                        result = (v == "true" || v == "1" || v == "on")
+                    }
+                    c.close()
+                    db.close()
+                    return result
+                }
+            }
+        } catch (_: Throwable) {}
+        return isTvInterfaceActive
+    }
+
+    private fun isPhoneSystemAutoRotateEnabled(): Boolean {
+        return try {
+            Settings.System.getInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION, 0) == 1
+        } catch (_: Throwable) {
+            false
+        }
+    }
+
+    private fun startFullAppGyroEngine() {
+        isTvInterfaceActive = checkTvInterfaceFromSqlite()
+        applyGyroBaselineMode()
+
+        if (autoRotateObserver == null) {
+            autoRotateObserver = object : ContentObserver(mainHandler) {
+                override fun onChange(selfChange: Boolean) {
+                    super.onChange(selfChange)
+                    applyGyroBaselineMode()
+                }
+            }
+            try {
+                contentResolver.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.ACCELEROMETER_ROTATION),
+                    false,
+                    autoRotateObserver!!
+                )
+            } catch (_: Throwable) {}
+        }
+
+        if (fullAppGyroListener == null) {
+            fullAppGyroListener = object : OrientationEventListener(this, SensorManager.SENSOR_DELAY_UI) {
+                override fun onOrientationChanged(angle: Int) {
+                    if (angle == ORIENTATION_UNKNOWN) return
+                    val now = System.currentTimeMillis()
+                    if (now - lastDbCheckMs >= 1500L) {
+                        lastDbCheckMs = now
+                        isTvInterfaceActive = checkTvInterfaceFromSqlite()
+                    }
+                    val sysAutoOn = isPhoneSystemAutoRotateEnabled()
+                    val twoDirectionMode = isTvInterfaceActive || !sysAutoOn
+
+                    val nextOrientation = if (twoDirectionMode) {
+                        when {
+                            angle in 35..145 -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+                            angle in 215..325 -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                            else -> lastAppliedGyroOrientation
+                        }
+                    } else {
+                        when {
+                            angle >= 325 || angle <= 35 -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                            angle in 55..125 -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+                            angle in 145..215 -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
+                            angle in 235..305 -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                            else -> lastAppliedGyroOrientation
+                        }
+                    }
+
+                    if (nextOrientation != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED &&
+                        nextOrientation != lastAppliedGyroOrientation) {
+                        lastAppliedGyroOrientation = nextOrientation
+                        super@MainActivity.setRequestedOrientation(nextOrientation)
+                    }
+                }
+            }
+        }
+        try {
+            if (fullAppGyroListener?.canDetectOrientation() == true) {
+                fullAppGyroListener?.enable()
+            }
+        } catch (_: Throwable) {}
+    }
+
+    private fun applyGyroBaselineMode() {
+        val sysAutoOn = isPhoneSystemAutoRotateEnabled()
+        val twoDirectionMode = isTvInterfaceActive || !sysAutoOn
+        if (twoDirectionMode) {
+            if (lastAppliedGyroOrientation != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE &&
+                lastAppliedGyroOrientation != ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+                lastAppliedGyroOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE)
+            }
+        } else {
+            if (lastAppliedGyroOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE) {
+                lastAppliedGyroOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+                super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR)
+            }
+        }
+    }
+
+    override fun setRequestedOrientation(requestedOrientation: Int) {
+        applyGyroBaselineMode()
+    }
+    // === END FULL APP GYRO ENGINE ===
+
+
     private var wifiLock: WifiManager.WifiLock? = null
     private var netCallback: ConnectivityManager.NetworkCallback? = null
     private val thumbnailExecutor = Executors.newSingleThreadExecutor()
