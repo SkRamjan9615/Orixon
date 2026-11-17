@@ -67,6 +67,10 @@ class _LocalMediaPlayerScreenState
   bool _showControls = true;
   bool _isDraggingSlider = false;
   bool _isHoldSlideSeeking = false;
+  String _panMode = 'none';
+  double _panStartX = 0.0;
+  double _panStartY = 0.0;
+  int _panStartPosMs = 0;
   double _holdStartX = 0.0;
   int _holdStartPosMs = 0;
   int _seekOriginPosMs = 0;
@@ -401,14 +405,7 @@ class _LocalMediaPlayerScreenState
     });
 
     final nowMs = DateTime.now().millisecondsSinceEpoch;
-    // Smooth live player frame scrub every 130ms
-    if (nowMs - _lastLiveScrubEpochMs > 75) {
-      _lastLiveScrubEpochMs = nowMs;
-      _player.seek(Duration(milliseconds: clampedMs));
-    }
-
-    // Live thumbnail frame extraction every 150ms
-    if (!_thumbBusy && (nowMs - _lastThumbReqEpochMs > 150)) {
+    if (!_thumbBusy && (nowMs - _lastThumbReqEpochMs > 90)) {
       _lastThumbReqEpochMs = nowMs;
       _thumbBusy = true;
       const MethodChannel('com.example.orixon/local_media')
@@ -423,7 +420,10 @@ class _LocalMediaPlayerScreenState
           )
           .then((bytes) {
             _thumbBusy = false;
-            if (mounted && bytes != null && bytes.isNotEmpty && (_isDraggingSlider || _isHoldSlideSeeking)) {
+            if (mounted &&
+                bytes != null &&
+                bytes.isNotEmpty &&
+                (_isDraggingSlider || _isHoldSlideSeeking)) {
               setState(() => _seekPreviewBytes = bytes);
             }
           })
@@ -1269,17 +1269,30 @@ class _LocalMediaPlayerScreenState
                             _isHoldSlideSeeking = false;
                             _seekPreviewBytes = null;
                           });
-                          _seek(target);
+                          _seek(target).then((_) {
+                            if (mounted && !_isPlaying) {
+                              _player.play();
+                            }
+                          });
                         }
+                      },
+                onPanStart: _isLocked
+                    ? null
+                    : (details) {
+                        _panStartX = details.localPosition.dx;
+                        _panStartY = details.localPosition.dy;
+                        _panStartPosMs = _position.inMilliseconds;
+                        _seekOriginPosMs = _position.inMilliseconds;
+                        _panMode = 'none';
                       },
                 onPanUpdate: _isLocked
                     ? null
                     : (details) {
                         final size = MediaQuery.sizeOf(context);
-                        final x = details.localPosition.dx;
-                        if (x < 24 || x > size.width - 24) return;
+                        // Ignore bottom 88px control bar area so Slider handles its own drag
+                        if (_panStartY > size.height - 88) return;
 
-                        if (_vrMode != 0 && details.delta.dx.abs() > details.delta.dy.abs()) {
+                        if (_vrMode != 0) {
                           setState(() {
                             _vrYaw = (_vrYaw - details.delta.dx * 0.005).clamp(-1.35, 1.35);
                             _vrPitch = (_vrPitch + details.delta.dy * 0.005).clamp(-0.85, 0.85);
@@ -1287,11 +1300,63 @@ class _LocalMediaPlayerScreenState
                           return;
                         }
 
-                        final deltaPct = (-details.delta.dy / (size.height * 0.65)) * 200.0;
-                        if (x < size.width * 0.5) {
+                        final totalDx = details.localPosition.dx - _panStartX;
+                        final totalDy = details.localPosition.dy - _panStartY;
+
+                        if (_panMode == 'none') {
+                          if (totalDx.abs() < 10 && totalDy.abs() < 10) return;
+
+                          if (totalDx.abs() > totalDy.abs() * 1.2) {
+                            // Horizontal drag anywhere on screen -> Live Seek Preview!
+                            if (!_isReady || _duration.inMilliseconds <= 0) return;
+                            _panMode = 'seek';
+                            _hideControlsTimer?.cancel();
+                            setState(() {
+                              _isHoldSlideSeeking = true;
+                              _showControls = true;
+                            });
+                          } else if (totalDy.abs() > totalDx.abs() * 1.3) {
+                            // Vertical drag ONLY in Left 22% edge (Brightness) or Right 22% edge (Volume)
+                            if (_panStartX >= 20 && _panStartX <= size.width * 0.22) {
+                              _panMode = 'brightness';
+                            } else if (_panStartX >= size.width * 0.78 &&
+                                _panStartX <= size.width - 20) {
+                              _panMode = 'volume';
+                            } else {
+                              _panMode = 'ignore';
+                            }
+                          }
+                        }
+
+                        if (_panMode == 'seek') {
+                          final rangeMs = (_duration.inMilliseconds * 0.25).clamp(45000.0, 120000.0);
+                          final offsetMs = ((totalDx / size.width) * rangeMs).round();
+                          _updateLiveSeekPreview(_panStartPosMs + offsetMs);
+                        } else if (_panMode == 'brightness') {
+                          final deltaPct = (-details.delta.dy / (size.height * 0.65)) * 200.0;
                           _applyBrightnessTotal(_brightness + deltaPct);
-                        } else {
+                        } else if (_panMode == 'volume') {
+                          final deltaPct = (-details.delta.dy / (size.height * 0.65)) * 200.0;
                           _applyVolumeTotal(_volume + deltaPct);
+                        }
+                      },
+                onPanEnd: _isLocked
+                    ? null
+                    : (_) {
+                        if (_panMode == 'seek' && _isHoldSlideSeeking) {
+                          final target = _position;
+                          setState(() {
+                            _isHoldSlideSeeking = false;
+                            _seekPreviewBytes = null;
+                            _panMode = 'none';
+                          });
+                          _seek(target).then((_) {
+                            if (mounted && !_isPlaying) {
+                              _player.play();
+                            }
+                          });
+                        } else {
+                          _panMode = 'none';
                         }
                       },
                 child: Stack(
@@ -1558,7 +1623,11 @@ class _LocalMediaPlayerScreenState
                                                           Duration(
                                                             milliseconds: value.round(),
                                                           ),
-                                                        );
+                                                        ).then((_) {
+                                                          if (mounted && !_isPlaying) {
+                                                            _player.play();
+                                                          }
+                                                        });
                                                       }
                                                     : null,
                                               ),
