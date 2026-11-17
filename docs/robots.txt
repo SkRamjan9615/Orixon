@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
+
 Sitemap: https://skramjan9615.github.io/orixon/sitemap.xml
