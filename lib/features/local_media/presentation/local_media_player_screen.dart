@@ -403,120 +403,10 @@ class _LocalMediaPlayerScreenState
     setState(() {
       _position = Duration(milliseconds: clampedMs);
     });
-
-    final nowMs = DateTime.now().millisecondsSinceEpoch;
-    if (!_thumbBusy && (nowMs - _lastThumbReqEpochMs > 90)) {
-      _lastThumbReqEpochMs = nowMs;
-      _thumbBusy = true;
-      const MethodChannel('com.example.orixon/local_media')
-          .invokeMethod<Uint8List>(
-            'getVideoThumbnail',
-            <String, dynamic>{
-              'uri': _currentVideo.filePath,
-              'maxWidth': 240,
-              'maxHeight': 135,
-              'timeMs': clampedMs,
-            },
-          )
-          .then((bytes) {
-            _thumbBusy = false;
-            if (mounted &&
-                bytes != null &&
-                bytes.isNotEmpty &&
-                (_isDraggingSlider || _isHoldSlideSeeking)) {
-              setState(() => _seekPreviewBytes = bytes);
-            }
-          })
-          .catchError((_) {
-            _thumbBusy = false;
-          });
-    }
   }
 
   Widget _buildLiveSeekPreviewOverlay() {
-    final deltaSec = ((_position.inMilliseconds - _seekOriginPosMs) / 1000).round();
-    final deltaStr = deltaSec >= 0 ? '+${deltaSec}s' : '${deltaSec}s';
-    return Positioned(
-      left: 0,
-      right: 0,
-      bottom: 92,
-      child: IgnorePointer(
-        child: Center(
-          child: Container(
-            width: 176,
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: const Color(0xFF07101E).withValues(alpha: 0.92),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: _accent.withValues(alpha: 0.75), width: 1.4),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.65),
-                  blurRadius: 16,
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(9),
-                  child: SizedBox(
-                    width: 164,
-                    height: 92,
-                    child: _seekPreviewBytes != null && _seekPreviewBytes!.isNotEmpty
-                        ? Image.memory(
-                            _seekPreviewBytes!,
-                            fit: BoxFit.cover,
-                            gaplessPlayback: true,
-                          )
-                        : Container(
-                            color: const Color(0xFF0E1B31),
-                            alignment: Alignment.center,
-                            child: const Icon(
-                              Icons.fast_forward_rounded,
-                              color: _accent,
-                              size: 28,
-                            ),
-                          ),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      _formatTime(_position),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
-                      decoration: BoxDecoration(
-                        color: _accent.withValues(alpha: 0.18),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        deltaStr,
-                        style: const TextStyle(
-                          color: _accent,
-                          fontSize: 10.5,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+    return const SizedBox.shrink();
   }
 
   void _scheduleHideControls() {
@@ -1441,7 +1331,7 @@ class _LocalMediaPlayerScreenState
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  Colors.black.withValues(alpha: 0.78),
+                                  Colors.black.withValues(alpha: 0.24),
                                   Colors.transparent,
                                 ],
                                 begin: Alignment.topCenter,
@@ -1591,9 +1481,13 @@ class _LocalMediaPlayerScreenState
                                           Expanded(
                                             child: SliderTheme(
                                               data: SliderTheme.of(context).copyWith(
-                                                trackHeight: 3.5,
+                                                trackHeight: 2.8,
+                                                activeTrackColor: _accent.withValues(alpha: 0.82),
+                                                inactiveTrackColor: Colors.white.withValues(alpha: 0.20),
+                                                thumbColor: _accent,
+                                                overlayColor: _accent.withValues(alpha: 0.15),
                                                 thumbShape: const RoundSliderThumbShape(
-                                                  enabledThumbRadius: 7,
+                                                  enabledThumbRadius: 6,
                                                 ),
                                               ),
                                               child: Slider(
@@ -1678,16 +1572,22 @@ class _LocalMediaPlayerScreenState
                                                 color: Colors.white,
                                               ),
                                               const SizedBox(width: 8),
-                                              IconButton.filled(
+                                              IconButton(
                                                 style: IconButton.styleFrom(
-                                                  backgroundColor: _accent,
-                                                  foregroundColor: Colors.black,
+                                                  backgroundColor: Colors.white.withValues(alpha: 0.12),
+                                                  foregroundColor: Colors.white,
+                                                  side: BorderSide(
+                                                    color: _accent.withValues(alpha: 0.65),
+                                                    width: 1.2,
+                                                  ),
                                                 ),
                                                 onPressed: _isReady && !_isSwitching
                                                     ? _togglePlayback
                                                     : null,
                                                 icon: Icon(
-                                                  _isPlaying ? Icons.pause : Icons.play_arrow,
+                                                  _isPlaying
+                                                      ? Icons.pause_rounded
+                                                      : Icons.play_arrow_rounded,
                                                 ),
                                                 iconSize: 28,
                                               ),
