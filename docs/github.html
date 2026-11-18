@@ -3,62 +3,150 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ORIXON GitHub Repository (SkRamjan9615/orixon) — Official Open-Source Code & Releases</title>
-  <meta name="description" content="Official public GitHub repository for ORIXON (https://github.com/SkRamjan9615/orixon) by Sk Ramjan Ali. Download Orixon.apk and explore the open-source Flutter & Kotlin Smart TV OS, IPTV & 4K VR Media Hub source code." />
-  <meta name="keywords" content="orixon github, SkRamjan9615/orixon, Orixon repository, Orixon source code, Orixon APK github, Sk Ramjan Ali github" />
+  <meta name="google-site-verification" content="0bd7234e6b90e7f7" />
+  <title>ORIXON GitHub Repository (SkRamjan9615/orixon) — Architecture, M3U IPTV, 4K VR Player &amp; Release Docs</title>
+  <meta name="description" content="Complete technical documentation and official GitHub repository guide for ORIXON (SkRamjan9615/orixon) by Sk Ramjan Ali. Learn about the 128MB IPTV M3U engine, 4K HDR10 &amp; VR 360/3D Headset Media Hub, Global Cloud File Share, and DuckDuckGo WebX Browser." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://skramjan9615.github.io/orixon/github.html" />
   <link rel="icon" type="image/png" href="assets/orixon-logo.png" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "SoftwareSourceCode",
-    "name": "ORIXON (SkRamjan9615/orixon)",
-    "alternateName": ["Orixon GitHub", "Orixon Repository", "SkRamjan9615/orixon"],
-    "codeRepository": "https://github.com/SkRamjan9615/orixon",
-    "url": "https://github.com/SkRamjan9615/orixon",
-    "programmingLanguage": ["Dart", "Kotlin", "Flutter"],
-    "license": "https://www.apache.org/licenses/LICENSE-2.0",
+    "@type": "TechArticle",
+    "headline": "ORIXON Official GitHub Repository & Technical Architecture (SkRamjan9615/orixon)",
+    "alternativeHeadline": "Open-Source Smart TV OS Launcher, Free IPTV M3U Player, 4K VR 360 Media Hub & Android TV File Sharing Suite",
     "author": { "@type": "Person", "name": "Sk Ramjan Ali", "url": "https://github.com/SkRamjan9615" },
-    "description": "ORIXON is a public open-source repository on GitHub (SkRamjan9615/orixon) providing a cross-platform Smart TV OS Launcher, Live IPTV & M3U Studio, 4K HDR10 & VR 360/3D Headset Media Hub, Global Cloud Share Hub, and DuckDuckGo WebX Privacy Browser."
+    "publisher": { "@type": "Organization", "name": "ORIXON", "url": "https://skramjan9615.github.io/orixon/" },
+    "mainEntityOfPage": "https://skramjan9615.github.io/orixon/github.html",
+    "about": {
+      "@type": "SoftwareSourceCode",
+      "name": "ORIXON (SkRamjan9615/orixon)",
+      "codeRepository": "https://github.com/SkRamjan9615/orixon",
+      "programmingLanguage": ["Flutter", "Dart", "Kotlin"]
+    }
   }
   </script>
   <style>
-    body { background: #030711; color: #F1F5F9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 40px 20px; line-height: 1.65; }
-    .box { max-width: 860px; margin: 0 auto; background: rgba(15, 29, 54, 0.78); border: 1px solid rgba(56, 189, 248, 0.38); border-radius: 24px; padding: 36px 28px; }
-    .top { display: flex; align-items: center; gap: 18px; margin-bottom: 20px; }
-    .top img { width: 72px; height: 72px; border-radius: 18px; border: 1px solid #38BDF8; }
-    h1 { font-size: 28px; margin: 0; color: #FFFFFF; }
-    .sub { color: #7DD3FC; font-weight: 700; font-size: 14px; }
-    p { color: #CBD5E1; font-size: 15.5px; margin: 14px 0; }
-    .btn { display: inline-block; margin-top: 14px; margin-right: 12px; padding: 14px 26px; border-radius: 14px; font-weight: 800; text-decoration: none; background: linear-gradient(135deg, #E0F2FE, #38BDF8); color: #030711; }
-    .btn-sec { display: inline-block; margin-top: 14px; padding: 14px 24px; border-radius: 14px; font-weight: 700; text-decoration: none; background: rgba(15, 23, 42, 0.85); color: #E0F2FE; border: 1px solid #38BDF8; }
-    ul { color: #94A3B8; padding-left: 20px; }
+    body { background: #030711; color: #F1F5F9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 36px 18px 80px; line-height: 1.7; }
+    .container { max-width: 960px; margin: 0 auto; }
+    .card { background: rgba(15, 29, 54, 0.78); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 22px; padding: 32px 26px; margin-bottom: 24px; }
+    .top { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; margin-bottom: 18px; }
+    .top img { width: 76px; height: 76px; border-radius: 18px; border: 1.5px solid #38BDF8; }
+    h1 { font-size: clamp(24px, 4vw, 34px); margin: 0; color: #FFFFFF; }
+    h2 { font-size: 22px; color: #E0F2FE; margin-top: 0; margin-bottom: 12px; border-bottom: 1px solid rgba(56, 189, 248, 0.2); padding-bottom: 8px; }
+    h3 { font-size: 17px; color: #7DD3FC; margin-top: 18px; margin-bottom: 6px; }
+    .sub { color: #38BDF8; font-weight: 700; font-size: 14px; }
+    p { color: #CBD5E1; font-size: 15px; margin: 12px 0; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+    .btn { display: inline-block; padding: 13px 24px; border-radius: 13px; font-weight: 800; text-decoration: none; background: linear-gradient(135deg, #E0F2FE, #38BDF8); color: #030711; }
+    .btn-sec { display: inline-block; padding: 13px 22px; border-radius: 13px; font-weight: 700; text-decoration: none; background: rgba(15, 23, 42, 0.85); color: #E0F2FE; border: 1px solid #38BDF8; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    th, td { border: 1px solid rgba(56, 189, 248, 0.22); padding: 11px 14px; text-align: left; }
+    th { background: rgba(56, 189, 248, 0.12); color: #FFFFFF; }
+    td { color: #CBD5E1; }
+    ul { color: #CBD5E1; padding-left: 22px; }
     li { margin-bottom: 8px; }
-    code { background: rgba(56, 189, 248, 0.14); color: #7DD3FC; padding: 2px 7px; border-radius: 6px; }
+    code { background: rgba(56, 189, 248, 0.14); color: #7DD3FC; padding: 2px 7px; border-radius: 6px; font-size: 13.5px; }
+    a { color: #38BDF8; }
   </style>
 </head>
 <body>
-  <div class="box">
-    <div class="top">
-      <img src="assets/orixon-logo.png" alt="ORIXON Icon" />
-      <div>
-        <h1>ORIXON Official GitHub Repository</h1>
-        <div class="sub">Public Repository: github.com/SkRamjan9615/orixon • Author: Sk Ramjan Ali</div>
+  <main class="container">
+    <article class="card">
+      <div class="top">
+        <img src="assets/orixon-logo.png" alt="ORIXON Official Icon" />
+        <div>
+          <h1>ORIXON Official GitHub Repository &amp; Architecture Guide</h1>
+          <div class="sub">Repository: SkRamjan9615/orixon • Version 1.0.0 • Author: Sk Ramjan Ali • Apache License 2.0</div>
+        </div>
       </div>
-    </div>
-    <p>
-      <strong>ORIXON</strong> (<code>SkRamjan9615/orixon</code>) is an active public open-source repository on GitHub created by <strong>Sk Ramjan Ali</strong>.
-      The repository hosts the complete Flutter (Dart) and native Android (Kotlin) source code, documentation, and official multi-platform release binaries for ORIXON v1.0.0.
-    </p>
-    <ul>
-      <li><strong>Repository URL:</strong> <a href="https://github.com/SkRamjan9615/orixon" style="color:#38BDF8;">https://github.com/SkRamjan9615/orixon</a></li>
-      <li><strong>Latest Release (v1.0.0):</strong> <a href="https://github.com/SkRamjan9615/orixon/releases/tag/v1.0.0" style="color:#38BDF8;">https://github.com/SkRamjan9615/orixon/releases/tag/v1.0.0</a></li>
-      <li><strong>Direct Android APK:</strong> <a href="https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon.apk" style="color:#38BDF8;">Orixon.apk (~35 MB)</a></li>
-      <li><strong>License:</strong> Apache License 2.0 with ORIXON Brand Protection Policy</li>
-    </ul>
-    <a class="btn" href="https://github.com/SkRamjan9615/orixon">★ Open SkRamjan9615/orixon on GitHub</a>
-    <a class="btn-sec" href="https://skramjan9615.github.io/orixon/">← Back to ORIXON Official Website</a>
-  </div>
+      <p>
+        <strong>ORIXON</strong> (<a href="https://github.com/SkRamjan9615/orixon">github.com/SkRamjan9615/orixon</a>) is a flagship open-source cross-platform multimedia operating environment,
+        Smart TV OS launcher, free IPTV &amp; M3U player, 4K HDR10 &amp; VR 360° / 3D Headset video player, wireless Android TV file sharing app, and DuckDuckGo privacy browser
+        engineered by <strong>Sk Ramjan Ali</strong> using Flutter (Dart 3) and native Android (Kotlin).
+      </p>
+      <div class="btn-row">
+        <a class="btn" href="https://github.com/SkRamjan9615/orixon">★ Explore SkRamjan9615/orixon on GitHub</a>
+        <a class="btn" href="https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon.apk">⬇ Download Orixon.apk (~35 MB)</a>
+        <a class="btn-sec" href="https://skramjan9615.github.io/orixon/">← Back to ORIXON Official Website Homepage</a>
+      </div>
+    </article>
+
+    <section class="card">
+      <h2>1. Official Release Binaries &amp; Platform Matrix</h2>
+      <p>All official release assets are compiled from the public source tree and hosted on <a href="https://github.com/SkRamjan9615/orixon/releases/tag/v1.0.0">GitHub Releases (v1.0.0)</a>:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Platform</th>
+            <th>Architecture</th>
+            <th>Primary Use Case</th>
+            <th>Direct Binary Link</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Android Phone</strong></td>
+            <td>ARM64-v8a / ARMv7</td>
+            <td>4K HDR10 Video Player, VR 3D Gyro Headset, IPTV M3U Studio &amp; Cloud File Share</td>
+            <td><a href="https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon.apk">Orixon.apk</a></td>
+          </tr>
+          <tr>
+            <td><strong>Android TV / Google TV</strong></td>
+            <td>Leanback TV OS</td>
+            <td>10-Foot Smart TV Launcher, D-Pad Remote Navigation, Voice Search &amp; Wireless File Hub</td>
+            <td><a href="https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon-Android-TV.apk">Orixon-Android-TV.apk</a></td>
+          </tr>
+          <tr>
+            <td><strong>Windows 10 / 11</strong></td>
+            <td>64-Bit (x86_64)</td>
+            <td>Desktop Media Workstation, Multi-Stream M3U IPTV &amp; Local FTP/Web File Transfer</td>
+            <td><a href="https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon-Windows.zip">Orixon-Windows.zip</a></td>
+          </tr>
+          <tr>
+            <td><strong>macOS</strong></td>
+            <td>Apple Silicon &amp; Intel</td>
+            <td>Hardware-Accelerated Media Hub, IPTV Studio &amp; Cross-Device Wireless Sharing</td>
+            <td><a href="https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon-macOS.zip">Orixon-macOS.zip</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>2. Deep-Dive Engineering Modules in SkRamjan9615/orixon</h2>
+      <h3>A. Live TV Engine &amp; M3U / M3U8 Playlist Studio (<code>lib/features/live_tv/</code>)</h3>
+      <p>
+        Unlike basic IPTV players that buffer on high-bitrate streams, ORIXON allocates a dedicated <strong>128 MB RAM stream cache</strong> (<code>cache-secs=60</code>)
+        inside its <code>media_kit</code> / <code>libmpv</code> pipeline. The built-in M3U parser natively extracts <code>#KODIPROP:inputstream.adaptive.license_key</code>
+        ClearKey DRM keys, splits <code>#EXTVLCOPT</code> and <code>#EXTHTTP</code> custom headers, probes streams across 9 smart User-Agent profiles,
+        and allows users to filter, manage, and export category-specific <code>.m3u</code> playlists.
+      </p>
+
+      <h3>B. 4K HDR10+ &amp; Hardware-Gyroscope VR 360° / 3D Headset Media Hub (<code>lib/features/local_media/</code>)</h3>
+      <p>
+        Designed as an all-format video player supporting <code>MKV</code>, <code>MP4</code>, <code>AVI</code>, <code>MOV</code>, <code>WEBM</code>, <code>TS</code>,
+        <code>HEVC (H.265)</code>, <code>AV1</code>, and <code>VP9</code> with <code>hwdec=auto-safe</code> hardware decoding. It features ultra-transparent glass controls,
+        zero-lag timeline scrubbing, dedicated left/right 22% screen edge zones for 0–200% hardware window brightness and 0–200% audio boost with Dolby Atmos passthrough,
+        native Android Picture-in-Picture (PiP), and a 60fps hardware <code>SensorManager</code> gyroscope bridge for immersive VR 360° and Side-by-Side (SBS) 3D headsets.
+      </p>
+
+      <h3>C. Global Cloud Share &amp; Android TV File Sharing Suite (<code>lib/features/file_hub/</code>)</h3>
+      <p>
+        ORIXON eliminates the need for separate file transfer apps on Android TV and smartphones by integrating five send-and-receive protocols:
+        <strong>Global Cloud Share</strong> (instant 6-digit Receive Code and direct browser download link), <strong>Receive File by Link</strong>,
+        <strong>Orixon Direct Beam</strong> (high-speed local Wi-Fi transfer), <strong>Wi-Fi Web Portal (<code>:8888</code>)</strong>, and
+        <strong>Wireless FTP Server (<code>:2121</code>)</strong>, paired with an Internal/SD/USB OTG file explorer and ZIP archiver.
+      </p>
+
+      <h3>D. Smart TV OS Launcher, Hardware Gyro Rotation &amp; DuckDuckGo WebX Browser</h3>
+      <p>
+        The OS shell adapts seamlessly between 10-foot Android TV D-Pad navigation and smartphone touch interfaces. On smartphones, a native Kotlin
+        <code>OrientationEventListener</code> drives 2-way landscape sensor rotation when TV Interface mode is active or system Auto-Rotate is off,
+        and full 4-way 360-degree rotation when Auto-Rotate is enabled. It also includes Universal Voice Search auto-play, full JSON backup and restore
+        via File Hub, a silent in-app OTA APK updater, and the ad-blocking DuckDuckGo WebX privacy browser.
+      </p>
+    </section>
+  </main>
 </body>
 </html>
