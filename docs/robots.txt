@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
+Sitemap: https://skramjan9615.github.io/orixon/orixon-sitemap.xml
 Sitemap: https://skramjan9615.github.io/orixon/sitemap.xml
