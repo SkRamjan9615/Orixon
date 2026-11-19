@@ -8,7 +8,7 @@
 
 **Flagship Cross-Platform Smart TV OS Launcher • Live IPTV & M3U Studio • 4K HDR10 & Hardware-Gyroscope VR 360° / 3D Headset Media Player • Global Cloud & Wi-Fi File Share Hub • DuckDuckGo WebX Privacy Browser**
 
-**Version:** `v1.0.0` (Build 5) • **License:** `Apache-2.0` • **Author:** **Sk Ramjan Ali**  
+**Version:** `v1.1.0` (Build 10 • `org.orixon.app`) • **License:** `Apache-2.0` • **Author:** **Sk Ramjan Ali**  
 **Official Website & 1-Click Installer:** [https://skramjan9615.github.io/orixon/](https://skramjan9615.github.io/orixon/)
 
 </div>
@@ -31,10 +31,11 @@
 
 | Target Platform | System Requirements | Package Type | Direct Download Link |
 | :--- | :--- | :--- | :--- |
-| **Android Phone** | Android 8.0+ (`arm64-v8a`, ~35 MB) | `.apk` Installer | [**Download Orixon.apk**](https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon.apk) |
-| **Android TV / Google TV** | Android TV 8.0+ (D-Pad & Voice Remote) | `.apk` TV Edition | [**Download Orixon-Android-TV.apk**](https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon-Android-TV.apk) |
-| **Windows 10 / 11** | Windows 64-bit (`x86_64`) | `.zip` Package | [**Download Orixon-Windows.zip**](https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon-Windows.zip) |
-| **macOS** | Apple Silicon (`M1/M2/M3`) & Intel | `.zip` Package | [**Download Orixon-macOS.zip**](https://github.com/SkRamjan9615/orixon/releases/download/v1.0.0/Orixon-macOS.zip) |
+| **Android Phone** | Android 8.0+ (`arm64-v8a`, ~35 MB) | `.apk` Installer | [**Download Orixon.apk**](https://github.com/SkRamjan9615/orixon/releases/latest/download/Orixon.apk) |
+| **Android TV / Google TV** | Android TV 8.0+ (D-Pad & Voice Remote) | `.apk` TV Edition | [**Download Orixon-Android-TV.apk**](https://github.com/SkRamjan9615/orixon/releases/latest/download/Orixon-Android-TV.apk) |
+| **Windows 10 / 11** | Windows 64-bit (`x86_64`) | `.zip` Package | [**Download Orixon-Windows.zip**](https://github.com/SkRamjan9615/orixon/releases/latest/download/Orixon-Windows.zip) |
+| **iPhone / iPad (iOS)** | iOS 13.0+ (`org.orixon.app` Xcode Source) | iOS Source | [**Build Guide (`ios/`)**](ios/Runner/Info.plist) |
+| **macOS** | Apple Silicon (`M1/M2/M3`) & Intel | `.zip` Package | [**Download Orixon-macOS.zip**](https://github.com/SkRamjan9615/orixon/releases/latest/download/Orixon-macOS.zip) |
 
 ---
 

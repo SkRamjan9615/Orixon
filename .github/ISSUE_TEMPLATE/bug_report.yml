@@ -1,0 +1,18 @@
+name: Bug Report
+description: Report a bug or crash in ORIXON
+labels: ["bug"]
+body:
+  - type: input
+    id: device
+    attributes:
+      label: Device & OS Version
+      placeholder: e.g., Android 14 Phone / Google TV / iPhone 15 / Windows 11
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      placeholder: Describe what happened...
+    validations:
+      required: true

@@ -4,7 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.orixon"
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
+    namespace = "org.orixon.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
     ndkPath = "/tmp/jni-ndk-shim"
@@ -15,7 +19,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.orixon"
+        applicationId = "org.orixon.app"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

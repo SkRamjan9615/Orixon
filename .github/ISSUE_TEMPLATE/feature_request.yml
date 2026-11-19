@@ -1,0 +1,11 @@
+name: Feature Request
+description: Suggest a new legal improvement or feature for ORIXON
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: Feature Description
+      placeholder: Describe the feature and how it helps users...
+    validations:
+      required: true

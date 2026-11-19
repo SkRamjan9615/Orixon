@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Cable Vlc Stb</string>
+	<string>ORIXON</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -66,5 +66,28 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>ORIXON uses your local Wi-Fi network for Direct Beam, Wi-Fi Web Portal (:8888), Wireless FTP (:2121), and local IPTV streams.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>ORIXON uses the microphone for Universal Voice Search to open channels, videos, and settings hands-free.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>ORIXON uses speech recognition for instant voice search and channel auto-play.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>ORIXON accesses your photo and video library to play local videos in Media Hub and set custom gallery wallpapers.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
 </dict>
 </plist>

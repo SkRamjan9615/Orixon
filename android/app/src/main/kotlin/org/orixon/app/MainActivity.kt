@@ -1,4 +1,7 @@
-package com.example.orixon
+package org.orixon.app
+import android.content.IntentFilter
+import android.content.BroadcastReceiver
+import androidx.core.content.FileProvider
 import android.view.OrientationEventListener
 import android.database.sqlite.SQLiteDatabase
 import android.database.ContentObserver
@@ -57,6 +60,154 @@ import java.io.File
 import java.util.concurrent.Executors
 
 class MainActivity : FlutterActivity(), SensorEventListener {
+
+    // === BEGIN FULL APP GYRO ENGINE ===
+    private var fullAppGyroListener: OrientationEventListener? = null
+    private var autoRotateObserver: ContentObserver? = null
+    private var isTvInterfaceActive: Boolean = false
+    private var isPlayerScreenLocked: Boolean = false
+    private var lastAppliedGyroOrientation: Int = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+    private var lastGyroFlipMs: Long = 0L
+
+    private fun loadTvInterfacePref(): Boolean {
+        val prefs = getSharedPreferences("orixon_prefs", Context.MODE_PRIVATE)
+        if (prefs.contains("tv_interface_mode")) {
+            return prefs.getBoolean("tv_interface_mode", false)
+        }
+        try {
+            val candidates = listOf(
+                File(applicationInfo.dataDir, "app_flutter/orixon.sqlite"),
+                File(applicationInfo.dataDir, "app_flutter/app_database.sqlite"),
+                getDatabasePath("orixon.sqlite")
+            )
+            for (f in candidates) {
+                if (f != null && f.exists()) {
+                    val db = SQLiteDatabase.openDatabase(f.absolutePath, null, SQLiteDatabase.OPEN_READONLY)
+                    val c = db.rawQuery("SELECT value FROM app_settings WHERE key IN ('Android TV interface', 'tv_interface_mode') LIMIT 1", null)
+                    var res = false
+                    if (c.moveToFirst()) {
+                        val v = c.getString(0)?.trim()?.lowercase() ?: "false"
+                        res = (v == "true" || v == "1" || v == "on")
+                    }
+                    c.close()
+                    db.close()
+                    prefs.edit().putBoolean("tv_interface_mode", res).apply()
+                    return res
+                }
+            }
+        } catch (_: Throwable) {}
+        return false
+    }
+
+    private fun saveTvInterfacePref(enabled: Boolean) {
+        isTvInterfaceActive = enabled
+        getSharedPreferences("orixon_prefs", Context.MODE_PRIVATE)
+            .edit().putBoolean("tv_interface_mode", enabled).apply()
+    }
+
+    private fun isPhoneSystemAutoRotateEnabled(): Boolean {
+        return try {
+            Settings.System.getInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION, 0) == 1
+        } catch (_: Throwable) { false }
+    }
+
+    private fun startFullAppGyroEngine() {
+        isTvInterfaceActive = loadTvInterfacePref()
+        applyGyroBaselineMode()
+
+        if (autoRotateObserver == null) {
+            autoRotateObserver = object : ContentObserver(mainHandler) {
+                override fun onChange(selfChange: Boolean) {
+                    super.onChange(selfChange)
+                    applyGyroBaselineMode()
+                }
+            }
+            try {
+                contentResolver.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.ACCELEROMETER_ROTATION),
+                    false,
+                    autoRotateObserver!!
+                )
+            } catch (_: Throwable) {}
+        }
+
+        if (fullAppGyroListener == null) {
+            fullAppGyroListener = object : OrientationEventListener(this, SensorManager.SENSOR_DELAY_UI) {
+                override fun onOrientationChanged(angle: Int) {
+                    if (angle == ORIENTATION_UNKNOWN || isPlayerScreenLocked) return
+                    val now = System.currentTimeMillis()
+                    if (now - lastGyroFlipMs < 350L) return
+
+                    val sysAutoOn = isPhoneSystemAutoRotateEnabled()
+                    val twoDirectionMode = isTvInterfaceActive || !sysAutoOn
+
+                    val nextOrientation = if (twoDirectionMode) {
+                        when {
+                            angle in 35..145 -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+                            angle in 215..325 -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                            else -> lastAppliedGyroOrientation
+                        }
+                    } else {
+                        when {
+                            angle >= 325 || angle <= 35 -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                            angle in 55..125 -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+                            angle in 145..215 -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
+                            angle in 235..305 -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                            else -> lastAppliedGyroOrientation
+                        }
+                    }
+
+                    if (nextOrientation != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED &&
+                        nextOrientation != lastAppliedGyroOrientation) {
+                        lastGyroFlipMs = now
+                        lastAppliedGyroOrientation = nextOrientation
+                        super@MainActivity.setRequestedOrientation(nextOrientation)
+                    }
+                }
+            }
+        }
+        try {
+            if (fullAppGyroListener?.canDetectOrientation() == true) {
+                fullAppGyroListener?.enable()
+            }
+        } catch (_: Throwable) {}
+    }
+
+    private fun stopFullAppGyroEngine() {
+        try { fullAppGyroListener?.disable() } catch (_: Throwable) {}
+    }
+
+    private fun cleanupGyroObservers() {
+        stopFullAppGyroEngine()
+        try {
+            autoRotateObserver?.let { contentResolver.unregisterContentObserver(it) }
+            autoRotateObserver = null
+        } catch (_: Throwable) {}
+    }
+
+    private fun applyGyroBaselineMode() {
+        if (isPlayerScreenLocked) return
+        val sysAutoOn = isPhoneSystemAutoRotateEnabled()
+        val twoDirectionMode = isTvInterfaceActive || !sysAutoOn
+        if (twoDirectionMode) {
+            if (lastAppliedGyroOrientation != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE &&
+                lastAppliedGyroOrientation != ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+                lastAppliedGyroOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE)
+            }
+        } else {
+            if (lastAppliedGyroOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE) {
+                lastAppliedGyroOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+                super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR)
+            }
+        }
+    }
+
+    override fun setRequestedOrientation(requestedOrientation: Int) {
+        applyGyroBaselineMode()
+    }
+    // === END FULL APP GYRO ENGINE ===
+
 
     
 
@@ -188,9 +339,15 @@ class MainActivity : FlutterActivity(), SensorEventListener {
         enableNetworkTurboMode()
     }
 
+    override fun onPause() {
+        stopFullAppGyroEngine()
+        super.onPause()
+    }
+
     override fun onDestroy() {
         stopVrGyroTracking()
         releaseNetworkTurboMode()
+        cleanupGyroObservers()
         super.onDestroy()
     }
 
@@ -404,14 +561,14 @@ class MainActivity : FlutterActivity(), SensorEventListener {
 
     private fun shareFilesNative(paths: List<String>, preferNearby: Boolean) {
         if (paths.isEmpty()) return
-        StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder().build())
+        // Uses AndroidX FileProvider
         val uris = ArrayList<Uri>()
         for (p in paths) {
             if (p.startsWith("content://")) {
                 uris.add(Uri.parse(p))
             } else {
                 val f = File(p.removePrefix("file://"))
-                if (f.exists()) uris.add(Uri.fromFile(f))
+                if (f.exists()) uris.add(try { FileProvider.getUriForFile(this@MainActivity, "$packageName.fileprovider", f) } catch (_: Exception) { Uri.fromFile(f) })
             }
         }
         if (uris.isEmpty()) return
@@ -440,9 +597,9 @@ class MainActivity : FlutterActivity(), SensorEventListener {
     private fun openFileExternal(path: String, mimeType: String?) {
         val f = File(path)
         if (!f.exists()) return
-        StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder().build())
+        // Uses AndroidX FileProvider
         val intent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(Uri.fromFile(f), mimeType ?: "*/*")
+            setDataAndType(try { FileProvider.getUriForFile(this@MainActivity, "$packageName.fileprovider", f) } catch (_: Exception) { Uri.fromFile(f) }, mimeType ?: "*/*")
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         startActivity(Intent.createChooser(intent, "Open with"))
@@ -565,7 +722,8 @@ class MainActivity : FlutterActivity(), SensorEventListener {
                     } catch (_: Throwable) {}
                     result.success(deleted)
                 }
-                "setTvInterfaceMode" -> { isTvInterfaceActive = call.argument<Boolean>("enabled") ?: false; applyGyroBaselineMode(); result.success(true) }
+                "setScreenLocked" -> { isPlayerScreenLocked = call.argument<Boolean>("locked") ?: false; result.success(true) }
+                "setTvInterfaceMode" -> { saveTvInterfacePref(call.argument<Boolean>("enabled") ?: false); applyGyroBaselineMode(); result.success(true) }
                 "hasAllFilesPermission" -> result.success(hasAllFilesPermission())
                 "requestAllFilesPermission" -> { requestAllFilesPermission(); result.success(true) }
                 "getStorageRoots" -> result.success(getStorageRoots())
@@ -605,7 +763,7 @@ object WebxViewHolder {
                 return@setMethodCallHandler
             }
             when (call.method) {
-                "loadUrl" -> { view.loadUrl(call.argument<String>("url") ?: "https://www.google.com"); result.success(true) }
+                "loadUrl" -> { view.loadUrl(call.argument<String>("url") ?: "https://duckduckgo.com"); result.success(true) }
                 "goBack" -> { view.goBack(); result.success(true) }
                 "goForward" -> { view.goForward(); result.success(true) }
                 "reload" -> { view.reload(); result.success(true) }
@@ -633,7 +791,7 @@ class OrixonWebxFactory(
 ) : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
     override fun create(context: Context, viewId: Int, args: Any?): PlatformView {
         val params = args as? Map<*, *>
-        val initialUrl = (params?.get("initialUrl") as? String) ?: "https://www.google.com"
+        val initialUrl = (params?.get("initialUrl") as? String) ?: "https://duckduckgo.com"
         val adBlock = (params?.get("adBlock") as? Boolean) ?: true
         val view = OrixonWebxPlatformView(context, mainHandler, initialUrl, adBlock)
         WebxViewHolder.activeWebView = view
@@ -675,7 +833,7 @@ class OrixonWebxPlatformView(
             builtInZoomControls = true
             displayZoomControls = false
             setSupportMultipleWindows(false)
-            userAgentString = "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36"
+            userAgentString = "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36"
         }
 
         webView.webChromeClient = object : WebChromeClient() {
@@ -727,9 +885,9 @@ class OrixonWebxPlatformView(
 
     fun setDesktopMode(desktop: Boolean) {
         webView.settings.userAgentString = if (desktop) {
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
         } else {
-            "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36"
         }
         webView.reload()
     }

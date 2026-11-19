@@ -339,7 +339,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
 
     Future<void> _silentCheckUpdateStatus() async {
-    const currentVersion = '1.0.0';
+    const currentVersion = '1.1.0';
     try {
       final client = HttpClient()
         ..connectionTimeout = const Duration(seconds: 10)
@@ -369,7 +369,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _checkAndInstallAppUpdate() async {
-    const currentVersion = '1.0.0';
+    const currentVersion = '1.1.0';
     _showToast('Checking for updates...');
     try {
       final client = HttpClient()
@@ -1088,7 +1088,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           border: Border.all(color: _accent.withValues(alpha: 0.38)),
                         ),
                         child: const Text(
-                          'Version 1.0.0',
+                          'Version 1.1.0',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 11,

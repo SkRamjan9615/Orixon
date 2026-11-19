@@ -1,0 +1,7 @@
+ORIXON is a free, open-source (Apache 2.0) multimedia player, Smart TV OS launcher, user-provided M3U IPTV studio, wireless file manager, and DuckDuckGo privacy browser.
+
+Features:
+- 4K HDR10+ & 60fps Hardware Gyroscope VR 360 / Side-by-Side 3D Headset Video Player
+- Live IPTV M3U/M3U8 Studio with 128 MB RAM stream cache & ClearKey DRM support (no pre-loaded streams)
+- Wireless File Hub: Global Cloud Share (6-digit code), Direct Beam, Wi-Fi Web Portal (:8888), FTP (:2121)
+- DuckDuckGo WebX Privacy Browser & Full JSON Settings/Playlist Backup & Restore
