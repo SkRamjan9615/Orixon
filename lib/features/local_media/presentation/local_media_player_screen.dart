@@ -443,15 +443,21 @@ class _LocalMediaPlayerScreenState
     } catch (_) {}
   }
 
+  bool _lastAutoPipArmed = false;
+
+  void _syncNativeAutoPip() {
+    final shouldArm = _pipModeSetting == 'Picture-in-Picture' && _isPlaying;
+    if (shouldArm != _lastAutoPipArmed) {
+      _lastAutoPipArmed = shouldArm;
+      _sysChannel.invokeMethod('setAutoPipArmed', shouldArm).catchError((_) {});
+    }
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.inactive || state == AppLifecycleState.paused) {
+    if (state == AppLifecycleState.paused) {
       if (_pipModeSetting == 'Disabled' && _isPlaying) {
         _player.pause();
-      } else if (_pipModeSetting == 'Picture-in-Picture' &&
-          _isPlaying &&
-          state == AppLifecycleState.inactive) {
-        _triggerPipMode();
       }
     }
   }
@@ -1009,6 +1015,7 @@ class _LocalMediaPlayerScreenState
 
   @override
   void dispose() {
+    _sysChannel.invokeMethod('setAutoPipArmed', false).catchError((_) {});
     _hideControlsTimer?.cancel();
     _hudTimer?.cancel();
     _vrGyroTimer?.cancel();
@@ -1032,6 +1039,7 @@ class _LocalMediaPlayerScreenState
 
   @override
   Widget build(BuildContext context) {
+    _syncNativeAutoPip();
     final maxMs = _duration.inMilliseconds;
     final currentMs = _position.inMilliseconds.clamp(0, maxMs > 0 ? maxMs : 0);
     final currentFit = _fitModes[_fitIndex];

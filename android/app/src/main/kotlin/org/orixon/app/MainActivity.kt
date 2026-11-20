@@ -618,6 +618,20 @@ class MainActivity : FlutterActivity(), SensorEventListener {
         }
     }
 
+    private var autoPipArmed: Boolean = false
+
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+        if (autoPipArmed && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !isInPictureInPictureMode) {
+            try {
+                val params = PictureInPictureParams.Builder()
+                    .setAspectRatio(Rational(16, 9))
+                    .build()
+                enterPictureInPictureMode(params)
+            } catch (_: Throwable) {}
+        }
+    }
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         val messenger = flutterEngine.dartExecutor.binaryMessenger
@@ -681,6 +695,10 @@ class MainActivity : FlutterActivity(), SensorEventListener {
                             am.setStreamVolume(AudioManager.STREAM_MUSIC, targetVol, 0)
                         }
                     } catch (_: Throwable) {}
+                    result.success(true)
+                }
+                "setAutoPipArmed" -> {
+                    autoPipArmed = (call.arguments as? Boolean) ?: false
                     result.success(true)
                 }
                 "enterPipMode" -> {
