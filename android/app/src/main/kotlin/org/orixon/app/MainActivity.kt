@@ -597,9 +597,40 @@ class MainActivity : FlutterActivity(), SensorEventListener {
     private fun openFileExternal(path: String, mimeType: String?) {
         val f = File(path)
         if (!f.exists()) return
-        // Uses AndroidX FileProvider
+        val isApk = path.endsWith(".apk", ignoreCase = true) ||
+            mimeType == "application/vnd.android.package-archive"
+        if (isApk) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !packageManager.canRequestPackageInstalls()) {
+                try {
+                    val permIntent = Intent(
+                        android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                        Uri.parse("package:$packageName")
+                    ).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+                    startActivity(permIntent)
+                } catch (_: Throwable) {}
+                return
+            }
+            val apkUri = try {
+                FileProvider.getUriForFile(this@MainActivity, "$packageName.fileprovider", f)
+            } catch (_: Exception) {
+                Uri.fromFile(f)
+            }
+            val installIntent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(apkUri, "application/vnd.android.package-archive")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            try {
+                startActivity(installIntent)
+            } catch (_: Throwable) {}
+            return
+        }
+        val uri = try {
+            FileProvider.getUriForFile(this@MainActivity, "$packageName.fileprovider", f)
+        } catch (_: Exception) {
+            Uri.fromFile(f)
+        }
         val intent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(try { FileProvider.getUriForFile(this@MainActivity, "$packageName.fileprovider", f) } catch (_: Exception) { Uri.fromFile(f) }, mimeType ?: "*/*")
+            setDataAndType(uri, mimeType ?: "*/*")
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         startActivity(Intent.createChooser(intent, "Open with"))
@@ -632,8 +663,101 @@ class MainActivity : FlutterActivity(), SensorEventListener {
         }
     }
 
+    private var pendingExternalFile: String? = null
+    private var orixonIntentChannel: MethodChannel? = null
+
+    private fun handleIncomingIntent(intent: Intent?) {
+        if (intent == null) return
+        val action = intent.action ?: return
+        var uri: Uri? = null
+        if (action == Intent.ACTION_VIEW) {
+            uri = intent.data
+        } else if (action == Intent.ACTION_SEND) {
+            uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                intent.getParcelableExtra(Intent.EXTRA_STREAM)
+            }
+            if (uri == null) {
+                val txt = intent.getStringExtra(Intent.EXTRA_TEXT)
+                if (!txt.isNullOrBlank() && (txt.startsWith("http://") || txt.startsWith("https://"))) {
+                    uri = Uri.parse(txt.trim())
+                }
+            }
+        } else if (action == Intent.ACTION_SEND_MULTIPLE) {
+            val list = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                intent.getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)
+            }
+            if (!list.isNullOrEmpty()) uri = list[0]
+        }
+        if (uri == null) return
+        val resolved = resolveIncomingUriToPath(uri) ?: return
+        if (resolved.endsWith(".apk", ignoreCase = true)) {
+            openFileExternal(resolved, "application/vnd.android.package-archive")
+            return
+        }
+        pendingExternalFile = resolved
+        try {
+            orixonIntentChannel?.invokeMethod("onExternalFile", resolved)
+        } catch (_: Throwable) {}
+    }
+
+    private fun resolveIncomingUriToPath(uri: Uri): String? {
+        return try {
+            val scheme = uri.scheme?.lowercase() ?: ""
+            if (scheme == "http" || scheme == "https") {
+                uri.toString()
+            } else if (scheme == "file") {
+                uri.path
+            } else if (scheme == "content") {
+                var displayName = "orixon_media_${System.currentTimeMillis()}"
+                contentResolver.query(uri, arrayOf(android.provider.OpenableColumns.DISPLAY_NAME), null, null, null)?.use { c ->
+                    if (c.moveToFirst()) {
+                        val idx = c.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+                        if (idx >= 0) {
+                            val name = c.getString(idx)
+                            if (!name.isNullOrBlank()) displayName = name
+                        }
+                    }
+                }
+                val safeName = displayName.replace(Regex("[^A-Za-z0-9._ -]"), "_")
+                val dir = File(cacheDir, "orixon_incoming").apply { mkdirs() }
+                val outFile = File(dir, safeName)
+                contentResolver.openInputStream(uri)?.use { input ->
+                    outFile.outputStream().use { output -> input.copyTo(output) }
+                }
+                if (outFile.exists() && outFile.length() > 0L) outFile.absolutePath else null
+            } else {
+                uri.path
+            }
+        } catch (_: Throwable) {
+            null
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleIncomingIntent(intent)
+    }
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        orixonIntentChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "org.orixon.app/intents")
+        orixonIntentChannel?.setMethodCallHandler { call, result ->
+            if (call.method == "getPendingExternalFile") {
+                val p = pendingExternalFile
+                pendingExternalFile = null
+                result.success(p)
+            } else {
+                result.notImplemented()
+            }
+        }
+        handleIncomingIntent(intent)
         val messenger = flutterEngine.dartExecutor.binaryMessenger
 
         MethodChannel(messenger, CHANNEL).setMethodCallHandler { call, result ->

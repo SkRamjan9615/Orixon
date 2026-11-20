@@ -339,7 +339,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
 
     Future<void> _silentCheckUpdateStatus() async {
-    const currentVersion = '1.1.0';
+    const currentVersion = '1.1.2';
     try {
       final client = HttpClient()
         ..connectionTimeout = const Duration(seconds: 10)
@@ -369,7 +369,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _checkAndInstallAppUpdate() async {
-    const currentVersion = '1.1.0';
+    const currentVersion = '1.1.2';
     _showToast('Checking for updates...');
     try {
       final client = HttpClient()
@@ -886,7 +886,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               showLicensePage(
                 context: context,
                 applicationName: 'ORIXON',
-                applicationVersion: 'v1.0.0',
+                applicationVersion: 'v1.1.2',
                 applicationLegalese: 'Copyright © 2026 ORIXON • Apache License 2.0',
               );
             },
@@ -1004,7 +1004,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onPressed: () {
                 final title = Uri.encodeComponent('[$feedbackType] ${titleCtrl.text.trim()}');
                 final body = Uri.encodeComponent(
-                  '### $feedbackType\n**Platform:** ORIXON v1.0.0\n\n${msgCtrl.text.trim()}',
+                  '### $feedbackType\n**Platform:** ORIXON v1.1.2\n\n${msgCtrl.text.trim()}',
                 );
                 Navigator.pop(ctx);
                 _openExternalUrl('https://github.com/Skramjan9615/orixon/issues/new?title=$title&body=$body');
