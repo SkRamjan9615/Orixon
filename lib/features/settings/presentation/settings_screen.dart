@@ -1088,7 +1088,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           border: Border.all(color: _accent.withValues(alpha: 0.38)),
                         ),
                         child: const Text(
-                          'Version 1.1.0',
+                          'Version 1.1.2',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 11,

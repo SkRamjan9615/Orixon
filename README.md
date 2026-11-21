@@ -8,7 +8,7 @@
 
 **Flagship Cross-Platform Smart TV OS Launcher • Live IPTV & M3U Studio • 4K HDR10 & Hardware-Gyroscope VR 360° / 3D Headset Media Player • Global Cloud & Wi-Fi File Share Hub • DuckDuckGo WebX Privacy Browser**
 
-**Version:** `v1.1.0` (Build 10 • `org.orixon.app`) • **License:** `Apache-2.0` • **Author:** **Sk Ramjan Ali**  
+**Version:** `v1.1.2` (Build 10 • `org.orixon.app`) • **License:** `Apache-2.0` • **Author:** **Sk Ramjan Ali**  
 **Official Website & 1-Click Installer:** [https://skramjan9615.github.io/orixon/](https://skramjan9615.github.io/orixon/)
 
 </div>
